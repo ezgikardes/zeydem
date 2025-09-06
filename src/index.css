@@ -1,0 +1,213 @@
+/* ===========================
+   Global Reset + Temel Değerler
+   =========================== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  text-decoration: none;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: "Rubik", sans-serif;
+  font-size: 18px;
+  line-height: 1.5;
+  color: #262626;
+  background: #f4f7ef;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Odak görünürlüğü */
+:focus-visible {
+  outline: 3px solid #8fbf26;
+  outline-offset: 2px;
+}
+
+/* Animasyonları tercih etmeyenler için */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ===========================
+   Tasarım Değişkenleri
+   =========================== */
+:root {
+  --side-gap: clamp(16px, 5vw, 56px);
+  --max-w: 1200px;
+  --section-gap: clamp(40px, 9vw, 96px);
+
+  --brand: #4c6b2a;
+  --brand-2: #8fbf26;
+  --ink: #1f1f1f;
+  --muted: #5a5a5a;
+  --surface: #ffffff;
+  --surface-2: #eef3e6;
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+  --radius: 16px;
+}
+
+/* ===========================
+   Kapsayıcı
+   =========================== */
+.container {
+  max-width: var(--max-w);
+  margin-inline: auto;
+  padding-inline: var(--side-gap);
+  width: 100%;
+}
+
+section {
+  padding-block: var(--section-gap);
+}
+
+/* ===========================
+   Üst Menü
+   =========================== */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: #f4f7ef;
+}
+
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  min-height: 72px;
+  padding-block: 12px;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 700;
+  font-size: 22px;
+  color: var(--brand);
+  text-decoration: none;
+}
+
+.brand img {
+  display: block;
+  height: 40px;
+  width: auto;
+  object-fit: contain;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: clamp(12px, 3vw, 28px);
+}
+
+.nav a {
+  color: var(--ink);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.nav .nav-btn {
+  color: var(--surface);
+}
+
+/* ===========================
+   Button
+   =========================== */
+.btn {
+  appearance: none;
+  border: 0;
+  cursor: pointer;
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 12px 20px;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+  box-shadow: var(--shadow);
+  background: var(--brand);
+  color: #fff;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+.btn:active {
+  transform: translateY(0);
+}
+
+.btn.outline {
+  background: #fff;
+  color: var(--ink);
+  border: 2px solid var(--surface-2);
+  box-shadow: none;
+}
+.btn.outline:hover {
+  border-color: var(--brand-2);
+}
+
+/* ===========================
+   Hero
+   =========================== */
+.hero {
+  padding-top: clamp(24px, 6vw, 48px);
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: clamp(20px, 5vw, 36px);
+  align-items: center;
+}
+
+@media (max-width: 960px) {
+  .hero-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+h1 {
+  margin: 0 0 14px 0;
+  font-size: clamp(36px, 6.2vw, 64px);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+.lead {
+  font-size: clamp(16px, 2.4vw, 20px);
+  color: var(--muted);
+  max-width: 60ch;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 24px;
+}
+
+/* görsel */
+.img-large > img {
+  width: 80%;
+  height: auto;
+  margin: 0 auto;
+  display: block;
+  object-fit: contain;
+}
