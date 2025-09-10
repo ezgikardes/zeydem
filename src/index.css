@@ -94,6 +94,7 @@ section {
   gap: 20px;
   min-height: 72px;
   padding-block: 12px;
+  padding-inline: clamp(16px, 4vw, 48px);
 }
 
 .brand {
@@ -210,4 +211,64 @@ h1 {
   margin: 0 auto;
   display: block;
   object-fit: contain;
+}
+
+/* ===========================
+   Features
+   =========================== */
+
+/* Başlık üstü küçük etiket */
+.eyebrow {
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--brand);
+  margin: 0 0 8px 0;
+}
+
+.section-title {
+  font-size: clamp(26px, 4.2vw, 40px);
+  margin: 0 0 28px 0;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+/* 2 sütunlu grid (mobilde 1 sütun) */
+.features-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(24px, 3vw, 44px) clamp(32px, 4vw, 64px);
+}
+@media (max-width: 960px) {
+  .features-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* tek satır: ikon + metin */
+.feature {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: start;
+  gap: clamp(16px, 2.4vw, 24px);
+}
+
+/* ikon yer tutucu */
+.feature-icon {
+  width: clamp(72px, 9vw, 112px);
+  height: clamp(72px, 9vw, 112px);
+}
+
+/* metinler */
+.feature-title {
+  margin: 0 0 8px 0;
+  font-size: clamp(18px, 2.2vw, 22px);
+  font-weight: 800;
+  color: var(--ink);
+}
+.feature-text {
+  margin: 0;
+  color: var(--muted);
+  max-width: 42ch;
 }

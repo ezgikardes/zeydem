@@ -1,10 +1,10 @@
 
-import darkLogo from "../../assets/logos/zeydem-logo.png"
+import darkLogo from "../assets/logos/zeydem-logo.png"
 
 function Header() {
     return (
         <header className="site-header">
-            <div className="container navbar">
+            <div className="navbar">
                 <a href="#" className="brand" aria-label="Zeydem Ana Sayfa">
                     <img alt="Zeydem" src={darkLogo} />
                 </a>

@@ -1,4 +1,4 @@
-import hero from "../../assets/hero-images/hero.png"
+import hero from "../assets/hero-images/hero.png"
 
 function Hero() {
     return (
@@ -25,7 +25,7 @@ function Hero() {
                 {/* Sağ sütun: görsel yerleşimi */}
                 <div>
                     <div className="img-large">
-                        <img src={hero} />
+                        <img alt="hero" src={hero} />
                     </div>
                 </div>
             </div>
