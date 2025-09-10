@@ -186,7 +186,7 @@ section {
 h1 {
   margin: 0 0 14px 0;
   font-size: clamp(36px, 6.2vw, 64px);
-  line-height: 1.05;
+  line-height: 1.2;
   letter-spacing: -0.02em;
   color: var(--ink);
 }
@@ -206,9 +206,10 @@ h1 {
 
 /* görsel */
 .img-large > img {
-  width: 80%;
+  width: 70%;
   height: auto;
   margin: 0 auto;
+  border-radius: 10px;
   display: block;
   object-fit: contain;
 }
@@ -216,6 +217,10 @@ h1 {
 /* ===========================
    Features
    =========================== */
+
+#features {
+  background: #fff;
+}
 
 /* Başlık üstü küçük etiket */
 .eyebrow {
@@ -271,4 +276,108 @@ h1 {
   margin: 0;
   color: var(--muted);
   max-width: 42ch;
+}
+
+/* ===========================
+   Tips Section
+   =========================== */
+
+.timeline {
+  position: relative;
+  display: grid;
+  gap: clamp(18px, 3vw, 28px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Dikey çizgi */
+.timeline::before {
+  content: "";
+  position: absolute;
+  left: 16px; /* dot merkezine göre ayar */
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--surface-2);
+}
+
+/* Her adım */
+.t-item {
+  position: relative;
+  padding-left: 48px; /* çizgi + dot + boşluk */
+}
+
+/* Nokta */
+.t-dot {
+  position: absolute;
+  left: 8px;
+  top: 14px; /* kart üstüne göre hizala */
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  background: var(--brand);
+  box-shadow: 0 0 0 4px #ffffff; /* beyaz halka ile çizgiden ayrıştır */
+}
+
+/* Kart */
+.t-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: clamp(12px, 2.4vw, 20px);
+  align-items: start;
+
+  background: #fff;
+  border: 1px solid var(--surface-2);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: clamp(12px, 2vw, 16px);
+}
+
+/* Görsel */
+.t-media {
+  width: clamp(90px, 16vw, 140px);
+  aspect-ratio: 1 / 1;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--surface-2);
+  background: #fff;
+}
+.t-media img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+/* Metin */
+.t-title {
+  margin: 0 0 6px 0;
+  font-weight: 800;
+  font-size: clamp(18px, 2.2vw, 22px);
+  color: var(--ink);
+}
+.t-text {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.6;
+  max-width: 60ch;
+}
+
+/* Responsive: mobilde çizgiyi sola yakın tut, kart tek kolon olsun */
+@media (max-width: 960px) {
+  .timeline::before {
+    left: 12px;
+  }
+  .t-item {
+    padding-left: 44px;
+  }
+  .t-card {
+    grid-template-columns: 1fr;
+  }
+  .t-media {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    border-radius: var(--radius);
+  }
 }
