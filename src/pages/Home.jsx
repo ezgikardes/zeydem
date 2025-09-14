@@ -1,5 +1,6 @@
 import Features from "../components/Features"
 import Hero from "../components/Hero"
+import Products from "../components/Products"
 import Tips from "../components/Tips"
 
 function Home() {
@@ -8,6 +9,7 @@ function Home() {
             <Hero />
             <Features />
             <Tips />
+            <Products />
         </div>
     )
 }
