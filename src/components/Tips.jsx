@@ -21,7 +21,7 @@ export default function Tips() {
                             <div className="t-body">
                                 <h3 className="t-title">Zeytinyağıyla gelen sağlık</h3>
                                 <p className="t-text">
-                                    Zeytinyağı sağlıklı bir diyetin vazgeçilmezi. Gerçek natürel zeytinyağı sindirim ve kalp-damar sağlığını destekler, bağışıklık sistemini güçlendirir.
+                                    Zeytinyağı sağlıklı bir diyetin vazgeçilmezi. Gerçek natürel zeytinyağı sindirim ve kalp-damar sağlığını destekler, bağışıklık sistemini güçlendirir. Ama bu, ne yazık ki her zeytinyağını doğrudan sağlıklı yapmıyor.
                                 </p>
                             </div>
                         </div>
@@ -37,7 +37,7 @@ export default function Tips() {
                             <div className="t-body">
                                 <h3 className="t-title">İşlenmiş yağların farkı</h3>
                                 <p className="t-text">
-                                    Ama bu, ne yazık ki her zeytinyağını doğrudan sağlıklı yapmıyor. Marketlerde bulduğumuz endüstriyel üretim yağlar genellikle yoğun kimyasal işlemlerden geçer. Bu tür yağların besin değeri oldukça düşüktür. Hele bir de yüksek sıcaklıkta işlem görmüşse, vitamin ve antioksidanlar neredeyse tamamen yok olur.
+                                    Marketlerde bulduğumuz endüstriyel üretim yağlar genellikle yoğun kimyasal işlemlerden geçer. Bu tür yağların besin değeri oldukça düşüktür. Hele bir de yüksek sıcaklıkta işlem görmüşse, vitamin ve antioksidanlar neredeyse tamamen yok olur.
                                 </p>
                             </div>
                         </div>
@@ -54,7 +54,7 @@ export default function Tips() {
                                 <h3 className="t-title">Aromaya kulak verin</h3>
                                 <p className="t-text">
                                     Peki gerçek natürel sızma zeytinyağını nasıl ayırt edebilirsiniz? Cevap çok
-                                    basit: Tad ve aromasıyla! İşlenmiş zeytinyağları neredeyse tatsızdır. Natürel
+                                    basit: Tadı ve aromasıyla! İşlenmiş zeytinyağları neredeyse tatsızdır. Natürel
                                     sızma zeytinyağları ise yoğun ve meyvemsi bir tada sahiptir.
                                 </p>
                             </div>
