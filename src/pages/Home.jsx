@@ -1,6 +1,7 @@
 import Features from "../components/Features"
 import Hero from "../components/Hero"
 import Products from "../components/Products"
+import Testimonials from "../components/Testimonials"
 import Tips from "../components/Tips"
 
 function Home() {
@@ -10,6 +11,7 @@ function Home() {
             <Features />
             <Tips />
             <Products />
+            <Testimonials />
         </div>
     )
 }
