@@ -175,7 +175,7 @@ section {
 } /* beyaz zemin */
 
 .hero {
-  padding-top: clamp(24px, 6vw, 48px);
+  padding-top: clamp(80px, 6vw, 48px);
 }
 
 .hero-grid {
@@ -452,11 +452,10 @@ h1 {
 
 .testimonials-wrap {
   display: grid;
-  grid-template-columns: 1.2fr 1fr; /* sol geniş, sağ dar */
+  grid-template-columns: 1.2fr 1fr;
   gap: clamp(24px, 4vw, 48px);
   align-items: start;
 }
-
 @media (max-width: 1024px) {
   .testimonials-wrap {
     grid-template-columns: 1fr;
@@ -470,8 +469,8 @@ h1 {
 
 .testi-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr; /* 2 sütun yorum */
-  gap: clamp(18px, 2.4vw, 28px);
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(18px, 2.4vw, 66px);
 }
 @media (max-width: 700px) {
   .testi-grid {
@@ -480,13 +479,18 @@ h1 {
 }
 
 .quote-card {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 14px;
-  padding: 14px;
-  border: 1px solid var(--surface-2);
-  border-radius: 14px;
-  background: #f7f9f2;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* sola hizala */
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.q-textwrap {
+  grid-area: text;
+}
+.q-sign {
+  grid-area: sign;
 }
 
 .avatar {
@@ -499,11 +503,15 @@ h1 {
 }
 
 .q-text {
-  margin: 0 0 8px 0;
-  color: var(--ink);
-}
-.q-name {
   margin: 0;
+  color: var(--ink);
+  font-size: clamp(16px, 2.2vw, 18px);
+  line-height: 1.6;
+  max-width: 40ch; /* rahat okuma genişliği */
+}
+
+.q-sign {
+  margin-top: 8px;
   color: var(--muted);
   font-size: 14px;
 }
@@ -517,16 +525,15 @@ h1 {
 @media (max-width: 1024px) {
   .gallery {
     grid-template-columns: repeat(4, 1fr);
-  } /* tablet genişse 4'lü hoş olur */
+  }
 }
 @media (max-width: 640px) {
   .gallery {
     grid-template-columns: repeat(3, 1fr);
   }
 }
-
 .g-item {
-  aspect-ratio: 1 / 1; /* kare */
+  aspect-ratio: 1/1;
   border-radius: 8px;
   overflow: hidden;
   background: #eaeaea;
