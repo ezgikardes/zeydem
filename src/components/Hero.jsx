@@ -25,7 +25,7 @@ function Hero() {
                 {/* Sağ sütun: görsel yerleşimi */}
                 <div>
                     <div className="img-large">
-                        <img alt="hero" src={hero} />
+                        <img alt="hero" src={hero.src} />
                     </div>
                 </div>
             </div>

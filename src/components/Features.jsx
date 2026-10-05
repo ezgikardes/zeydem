@@ -12,7 +12,7 @@ function Features() {
 
                 <div className="features-grid">
                     <article className="feature">
-                        <img className="feature-icon" alt="olive leaf" src={oliveLeaf} />
+                        <img className="feature-icon" alt="olive leaf" src={oliveLeaf.src} />
                         <div className="feature-body">
                             <h3 className="feature-title">Doğal</h3>
                             <p className="feature-text">
@@ -23,7 +23,7 @@ function Features() {
                     </article>
 
                     <article className="feature">
-                        <img className="feature-icon" alt="quality jug" src={qualityJug} />
+                        <img className="feature-icon" alt="quality jug" src={qualityJug.src} />
                         <div className="feature-body">
                             <h3 className="feature-title">Kaliteli</h3>
                             <p className="feature-text">
@@ -33,7 +33,7 @@ function Features() {
                     </article>
 
                     <article className="feature">
-                        <img className="feature-icon" alt="local" src={local} />
+                        <img className="feature-icon" alt="local" src={local.src} />
                         <div className="feature-body">
                             <h3 className="feature-title">Yerel</h3>
                             <p className="feature-text">
@@ -43,7 +43,7 @@ function Features() {
                     </article>
 
                     <article className="feature">
-                        <img className="feature-icon" alt="transparant" src={transparentJug} />
+                        <img className="feature-icon" alt="transparant" src={transparentJug.src} />
                         <div className="feature-body">
                             <h3 className="feature-title">Şeffaf</h3>
                             <p className="feature-text">

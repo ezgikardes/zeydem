@@ -15,15 +15,16 @@ is still in stock. The producers have no single list of what was ordered.
 
 ## Stack
 
-React 19 · Vite · TypeScript · Jest. A migration to Next.js is planned, for server rendering and
-SEO; see `docs/`.
+Next.js 15 · React 19 · TypeScript · Jest. Pages are rendered on the server, so search engines
+receive the content as HTML.
 
 ## Commands
 
 ```bash
-npm run dev     # start the site locally
+npm run dev     # start the site locally on http://localhost:3000
 npm test        # run the tests
 npm run build   # production build
+npm start       # serve the production build
 ```
 
 ## Documentation

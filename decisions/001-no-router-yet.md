@@ -1,5 +1,7 @@
 # 001 · No router yet
 
+**Status:** Superseded by #3 — the site moved to Next.js, which brings routing.
+
 **Decision:** The product list renders as a section of the existing single page. The project does
 not get a router in this ticket.
 

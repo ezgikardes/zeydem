@@ -16,7 +16,7 @@ export default function Tips() {
                         <div className="t-dot" aria-hidden="true" />
                         <div className="t-card">
                             <div className="t-media">
-                                <img src={tips1} alt="Zeytinyağı döken kadın" />
+                                <img src={tips1.src} alt="Zeytinyağı döken kadın" />
                             </div>
                             <div className="t-body">
                                 <h3 className="t-title">Zeytinyağıyla gelen sağlık</h3>
@@ -32,7 +32,7 @@ export default function Tips() {
                         <div className="t-dot" aria-hidden="true" />
                         <div className="t-card">
                             <div className="t-media">
-                                <img src={tips2} alt="Endüstriyel üretim hattı" />
+                                <img src={tips2.src} alt="Endüstriyel üretim hattı" />
                             </div>
                             <div className="t-body">
                                 <h3 className="t-title">İşlenmiş yağların farkı</h3>
@@ -48,7 +48,7 @@ export default function Tips() {
                         <div className="t-dot" aria-hidden="true" />
                         <div className="t-card">
                             <div className="t-media">
-                                <img src={tips3} alt="Zeytinyağı tadımı" />
+                                <img src={tips3.src} alt="Zeytinyağı tadımı" />
                             </div>
                             <div className="t-body">
                                 <h3 className="t-title">Aromaya kulak verin</h3>

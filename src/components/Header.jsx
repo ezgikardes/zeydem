@@ -6,7 +6,7 @@ function Header() {
         <header className="site-header">
             <div className="navbar">
                 <a href="#" className="brand" aria-label="Zeydem Ana Sayfa">
-                    <img alt="Zeydem" src={darkLogo} />
+                    <img alt="Zeydem" src={darkLogo.src} />
                 </a>
 
 
