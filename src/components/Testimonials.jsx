@@ -32,7 +32,7 @@ export default function Testimonials() {
                         {/* 1 */}
                         <article className="quote-card">
                             <div className="q-avatar">
-                                <img className="avatar" src={customer4} alt="Selin Arıkan" />
+                                <img className="avatar" src={customer4.src} alt="Selin Arıkan" />
                             </div>
                             <div className="q-textwrap">
                                 <p className="q-text">
@@ -45,7 +45,7 @@ export default function Testimonials() {
                         {/* 2 */}
                         <article className="quote-card">
                             <div className="q-avatar">
-                                <img className="avatar" src={customer3} alt="Tayfun Eren" />
+                                <img className="avatar" src={customer3.src} alt="Tayfun Eren" />
                             </div>
                             <div className="q-textwrap">
                                 <p className="q-text">
@@ -58,7 +58,7 @@ export default function Testimonials() {
                         {/* 3 */}
                         <article className="quote-card">
                             <div className="q-avatar">
-                                <img className="avatar" src={customer1} alt="Linda Carol Çakmak" />
+                                <img className="avatar" src={customer1.src} alt="Linda Carol Çakmak" />
                             </div>
                             <div className="q-textwrap">
                                 <p className="q-text">
@@ -71,7 +71,7 @@ export default function Testimonials() {
                         {/* 4 */}
                         <article className="quote-card">
                             <div className="q-avatar">
-                                <img className="avatar" src={customer2} alt="Mert Kaptanoğlu" />
+                                <img className="avatar" src={customer2.src} alt="Mert Kaptanoğlu" />
                             </div>
                             <div className="q-textwrap">
                                 <p className="q-text">
@@ -87,7 +87,7 @@ export default function Testimonials() {
                 <div className="gallery">
                     {galleryImages.map((src, i) => (
                         <div className="g-item" key={i}>
-                            <img src={src} alt={`gallery-${i + 1}`} />
+                            <img src={src.src} alt={`gallery-${i + 1}`} />
                         </div>
                     ))}
                 </div>

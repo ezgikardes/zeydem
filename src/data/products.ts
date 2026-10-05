@@ -6,13 +6,13 @@ export const products: Product[] = [
   {
     id: 'zy-1l',
     name: 'Natürel Sızma Zeytinyağı · 1 L',
-    image: bottledOliveOil,
+    image: bottledOliveOil.src,
     priceKurus: 40000,
   },
   {
     id: 'zy-5l',
     name: 'Natürel Sızma Zeytinyağı · 5 L',
-    image: tinnedOliveOil,
+    image: tinnedOliveOil.src,
     priceKurus: 160000,
   },
   {
