@@ -24,11 +24,6 @@ dist-ssr
 *.sw?
 .superpowers/
 
-# çalışma kâğıtları — repoya girmez
-docs/planning/
-# tasarım dokümanı, gizli bilgiler ayıklanana kadar
-docs/architecture.md
-
 # next.js
 .next/
 next-env.d.ts
