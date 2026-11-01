@@ -20,13 +20,23 @@ receive the content as HTML.
 
 ## Commands
 
+Run them inside `frontend/`.
+
 ```bash
+cd frontend
 npm run dev     # start the site locally on http://localhost:3000
 npm test        # run the tests
 npm run build   # production build
 npm start       # serve the production build
 ```
 
+## Repo
+
+- `frontend/` — the Next.js site
+- `backend/` — the Spring Boot service (coming)
+
 ## Documentation
 
+- `docs/plan.md` — the MVP plan
 - `docs/features/<name>/spec.md` — what a feature does, its interface, and what it leaves alone
+- `decisions/` — architecture decision records
