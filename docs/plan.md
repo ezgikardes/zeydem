@@ -15,9 +15,13 @@ logs in and sees the orders in one list. The site is live on the internet. Deliv
 - Payment runs in the provider's test mode (sandbox). One producer account, no customer accounts.
 - Every other technology choice is made when the ticket that needs it opens, and written into
   that ticket's spec. Those points are marked **⚑** below.
+- The frontend is deployed on Vercel from `main`. It goes live before T1.1, with the current
+  home page.
 
 **Out of scope:** walnuts, the English version, customer accounts, real payment, shipping,
 email, marking an order as shipped.
+
+**After delivery:** Docker for the local database and the backend tests (Testcontainers), ZEY-37.
 
 ## How work is broken down
 
@@ -40,7 +44,7 @@ implementation steps inside the ticket, split into BE and FE lines. Labels: `FE`
 
 | Key | Ticket | Side | Draft steps | h |
 |---|---|---|---|---|
-| ZEY-12 | T1.1 A visitor sees the product list with name, photo and price | FE+BE | **BE:** decision 003 (Java backend); Spring Boot skeleton ⚑ Maven/Gradle; layer packages + decision 004 (course week 5); product table + sample data ⚑ database and migrations; how prices are stored, decision 005 ⚑; `GET /products` + test. **FE:** `/urunler` page fetches on the server; test. **Deploy:** FE on Vercel (proposed), BE elsewhere ⚑; Netlify is switched off only after Vercel works | 14 |
+| ZEY-12 | T1.1 A visitor sees the product list with name, photo and price | FE+BE | **BE:** decision 003 (Java backend); Spring Boot skeleton ⚑ Maven/Gradle; layer packages + decision 004 (course week 5); product table + sample data ⚑ database and migrations; how prices are stored, decision 005 ⚑; `GET /products` + test. **FE:** `/urunler` page fetches on the server; test. **Deploy:** BE online ⚑ host; the FE on Vercel reads from it | 14 |
 | ZEY-13 | T1.2 A visitor opens a product's detail page | FE+BE | **BE:** `GET /products/{id}`. **FE:** `/urunler/[id]`; olive-oil-specific texts move here | 4 |
 | ZEY-14 | T1.3 With no products on sale, the visitor sees "Henüz ürün yok" | FE | Empty state + test | 1 |
 | ZEY-15 | T1.4 If products cannot load, the visitor sees an error | FE | Error state + test · cuttable | 2 |
@@ -105,7 +109,6 @@ T3.3, T4.1, T4.5) is never cut.
 
 - The course's remaining weekly assignments are not known yet. Each week, the assignment is
   matched to a ticket; if none fits, time comes from the cut list.
-- The Netlify site keeps its last successful build until Vercel replaces it in T1.1.
 - Are the testimonials on the current home page real? If not, they leave in T5.1.
 
 ## Verification
