@@ -18,7 +18,6 @@ it would run in the browser. Migrating first means the data code is written once
   Testimonials.
 - Builds the home page HTML on the server, so the product names are in the page source before
   any JavaScript runs.
-- Keeps the 12 existing tests passing with Jest.
 
 ### It leaves alone
 
@@ -30,7 +29,6 @@ it would run in the browser. Migrating first means the data code is written once
 | New colours, fonts, logo | Later ticket; the site must look the same |
 | `next/image` | It changes sizing and CSS; the site must look the same. Own ticket later |
 | Converting `.jsx` files to TypeScript | Not needed for the migration |
-| The test tool | Jest stays |
 
 ---
 
@@ -68,7 +66,6 @@ just a name: it marks the older routing system, and its presence made Next.js lo
 | `npm run dev` | Vite dev server on port 5173 | Next.js dev server on port 3000 |
 | `npm run build` | Vite build | Next.js build |
 | `npm start` | — | serves the built site |
-| `npm test` | Jest | Jest, unchanged |
 
 ### Images
 
@@ -94,21 +91,19 @@ on the live site.
 
 ### Before
 
-1. `main` is green: 12 tests pass.
-2. No component uses state, effects or event handlers. Every component can run on the server
+1. No component uses state, effects or event handlers. Every component can run on the server
    without the `"use client"` marker.
-3. Every image is a static import from `src/assets/`.
+2. Every image is a static import from `src/assets/`.
 
 ### After
 
 1. The home page looks the same as before: same sections, same order, same font, same images,
    same prices.
 2. The HTML that the server sends for `/` already contains the product names and prices.
-3. The same 12 tests pass, with no test changed.
-4. `npm run build` succeeds.
-5. There is no `vite.config.js`, no `index.html`, no `src/main.jsx`, no `src/App.jsx`, and no
+3. `npm run build` succeeds.
+4. There is no `vite.config.js`, no `index.html`, no `src/main.jsx`, no `src/App.jsx`, and no
    Vite package in `package.json`.
-6. The page title is "Zeydem" instead of "Vite + React". This is the only visible difference, and
+5. The page title is "Zeydem" instead of "Vite + React". This is the only visible difference, and
    it is on purpose.
 
 ---
@@ -118,7 +113,6 @@ on the live site.
 | What can go wrong | How we notice | What we do |
 |---|---|---|
 | An image is passed to `<img>` without `.src` | The image is missing; the HTML says `src="[object Object]"` | Read `.src`. Every `<img>` is checked by eye after the move |
-| Next.js rewrites `tsconfig.json` and sets JSX to `preserve`, which ts-jest cannot run | Every component test fails before running | Give Jest its own JSX setting in `jest.config.js`, so the site and the tests each get what they need |
 | The Rubik font link is lost when `index.html` goes | Text falls back to the system font | The link moves into the `<head>` of `app/layout.tsx` |
 | `index.css` is imported from a component | Next.js refuses: global CSS may only be imported in the layout | Import it in `app/layout.tsx` only |
 | A folder named `pages` exists anywhere Next.js looks for routes | The build fails: `Cannot find module '../../src/app/page.js'` | Do not name a folder `pages`. `src/pages/` was renamed |

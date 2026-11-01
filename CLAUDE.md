@@ -17,21 +17,16 @@ It is a learning project as well as a real shop, so **explaining beats finishing
 
 ## Rules that hold everywhere
 
-- **Money is an integer in kuruş.** `40000` means 400,00 TL. Never store or pass prices as
-  decimals; formatting happens in one place only.
 - **Components do not fetch data.** They take props. Data loading lives outside them, so a
   component can be tested without a database.
 - **Interface text is Turkish.** English is planned as a second language; do not hardcode English
   strings in components.
-- **Prices, stock and product data are not hardcoded in components.** Today they come from a mock
-  module, later from the database.
 
 ## Project shape
 
 ```
 app/                Next.js entry: layout.tsx (HTML shell) and page.tsx (the home page)
 src/components/     presentational React components
-src/utils.ts        small shared helpers
 docs/features/      one folder per feature, with its spec
 decisions/          architecture decision records (ADR)
 tests/mocks/        Jest mocks for styles and images

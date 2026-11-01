@@ -28,3 +28,6 @@ dist-ssr
 .next/
 next-env.d.ts
 *.tsbuildinfo
+
+# Turkish copies of the docs, kept local
+*.tr.md
