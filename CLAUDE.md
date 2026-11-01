@@ -12,8 +12,14 @@ This file holds what applies to the whole repo. Each app has its own notes:
   makes it pass.
 - **One ticket at a time.** The Jira ticket says where the work stops. If something outside it
   looks wrong, say so — do not fix it in the same change.
-- **Spec before code.** Features have a spec in `docs/features/<feature>/spec.md`. If the code needs
-  something the spec does not say, update the spec first.
+- **Spec before code.** Features have a spec in `docs/features/<feature>/spec.md`, started from
+  `docs/features/_template.md`. If the code needs something the spec does not say, update the spec
+  first.
+- **Contracts first.** Where the frontend and backend meet, the contract (request, response, error
+  shape) is written before either side. The frontend reads only contract fields; database names
+  and stack traces never cross.
+- **Bugs: investigate before fixing.** Reproduce the bug and explain the cause before changing
+  code. The fix starts with a failing regression test, then follows the usual commit stages.
 - **Ask before adding a dependency.** Small project, few packages on purpose.
 - **Explain unfamiliar code.** If a block needs more than a sentence to explain, it is probably
   the wrong solution for this project.
@@ -34,6 +40,8 @@ Work is broken down from large to small:
 
 Jira project `ZEY` is the single place for planning. A GitHub issue is opened when work on a
 ticket starts, titled with its key (`ZEY-12: …`). Branch names and commit messages carry the key.
+When a ticket closes, `docs/ai-notes.md` gets a few lines: where the assistant helped, and where it
+was corrected.
 
 ## Commits
 
@@ -44,7 +52,9 @@ Commits follow the stages of the work, not one commit per ticket:
 2. **Tests:** one commit per test case, or one for the whole suite.
 3. **Code:** the code that makes a failing test (or tests) pass comes in its own commit. If one
    piece of code makes several tests pass together, one commit is enough.
-4. **Docs:** one commit.
+4. **Refactor:** with the tests green, a change that keeps the behaviour the same comes in its own
+   commit.
+5. **Docs:** one commit.
 
 The cycle can repeat: a missed test gets its own commit, then the code that makes it pass.
 Never split something indivisible across commits; a coarser commit (a whole suite) is fine.
@@ -54,9 +64,11 @@ Never split something indivisible across commits; a coarser commit (a whole suit
 ```
 frontend/           Next.js site (see frontend/CLAUDE.md)
 backend/            Spring Boot service (arrives with ticket ZEY-12)
-docs/features/      one folder per feature, with its spec
+docs/features/      one folder per feature, with its spec; _template.md to start from
 docs/plan.md        the MVP plan
-decisions/          architecture decision records (ADR)
+docs/ai-notes.md    where the assistant helped, and where it was corrected
+decisions/          architecture decision records (ADR); _template.md to start from
+.github/            issue templates (bug report)
 ```
 
 Turkish copies of the docs (`*.tr.md`) are kept locally and ignored by git.
