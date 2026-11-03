@@ -42,8 +42,8 @@ Jira project `ZEY` is the single place for planning. A GitHub issue is opened wh
 ticket starts, titled with its key (`ZEY-12: …`). Branch names and commit messages carry the key.
 Ticket bodies follow `.github/ISSUE_TEMPLATE/ticket.md`. They are written together at the start of
 each sprint and approved one by one; Jira keeps the Turkish text, the GitHub issue is its English
-translation. When a ticket closes, `docs/ai-notes.md` gets a few lines: where the assistant helped,
-and where it was corrected.
+translation. When a ticket closes, `docs/ai-notes.tr.md` gets a few lines: where the assistant helped,
+and where it was corrected. It is kept in Turkish only, locally.
 
 ## Commits
 
@@ -68,7 +68,6 @@ frontend/           Next.js site (see frontend/CLAUDE.md)
 backend/            Spring Boot service (arrives with ticket ZEY-12)
 docs/features/      one folder per feature, with its spec; _template.md to start from
 docs/plan.md        the MVP plan
-docs/ai-notes.md    where the assistant helped, and where it was corrected
 decisions/          architecture decision records (ADR); _template.md to start from
 .github/            issue templates (ticket, bug report)
 ```

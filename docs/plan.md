@@ -39,14 +39,14 @@ implementation steps inside the ticket, split into BE and FE lines. Labels: `FE`
 | ZEY-8 | H2 Move the code into `frontend/` | Build, lint and dev run inside `frontend/` | 2 |
 | ZEY-9 | H3 Split CLAUDE.md | Repo-wide `CLAUDE.md` + `frontend/CLAUDE.md` | 1.5 |
 | ZEY-10 | H4 Plan into Jira and this file | Epics, stories, sprints; `docs/plan.md` | 1.5 |
-| ZEY-11 | H5 Page sketches and architecture ⚑ Figma or paper | Sketches of every MVP page and the earlier design system (colours, fonts, contrast rules) in `docs/features/design/`; context and container diagram and the domain class diagram in `docs/architecture.md` | 4 |
+| ZEY-11 | H5 Page sketches and architecture | Excalidraw sketches of every MVP page and the earlier design system (colours, fonts, contrast rules, the current logo) in `docs/features/design/`; context and container diagram and the domain class diagram in `docs/architecture.md` | 4 |
 
 ## F1 · Discover products · epic ZEY-2
 
 | Key | Ticket | Side | Draft steps | h |
 |---|---|---|---|---|
-| ZEY-12 | T1.1 A visitor sees the product list with name, photo and price | FE+BE | **BE:** decision 003 (Java backend); Spring Boot skeleton ⚑ Maven/Gradle; layer packages + decision 004 (course week 5); product table + sample data ⚑ database and migrations; how prices are stored, decision 005 ⚑; the contract for `GET /products`, errors included, written before either side; `GET /products` + test; layer boundaries checked by a tool. **FE:** design tokens and fonts from the design system; `/urunler` page fetches on the server; test. **Deploy:** BE online ⚑ host; the FE on Vercel reads from it | 14 |
-| ZEY-13 | T1.2 A visitor opens a product's detail page | FE+BE | **BE:** `GET /products/{id}`. **FE:** `/urunler/[id]`; olive-oil-specific texts move here | 4 |
+| ZEY-12 | T1.1 A visitor sees the product list with name, photo and price | FE+BE | **BE:** decision 003 (Java backend); Spring Boot skeleton with Maven; layer packages + decision 004 (course week 5); product table + sample data: PostgreSQL (Homebrew locally, Neon live), schema created by Hibernate, idempotent seed SQL; prices in TL as `NUMERIC(10,2)` / `BigDecimal`, decision 005; amount and unit as separate fields; the contract for `GET /products`, errors included, written before either side; `GET /products` + test; layer boundaries checked by ArchUnit. **FE:** design tokens and fonts from the design system; `/urunler` page fetches on the server; test. **Deploy:** BE on Render; the FE on Vercel reads from it | 14 |
+| ZEY-13 | T1.2 A visitor opens a product's detail page | FE+BE | **BE:** `slug` and `description` fields; `GET /products/{slug}`. **FE:** `/urunler/[slug]`; list cards link to it | 4 |
 | ZEY-14 | T1.3 With no products on sale, the visitor sees "Henüz ürün yok" | FE | Empty state + test | 1 |
 | ZEY-15 | T1.4 If products cannot load, the visitor sees an error | FE | Error state + test | 2 |
 | ZEY-16 | T1.5 An unknown product address shows "Ürün bulunamadı" | FE+BE | **BE:** 404. **FE:** not-found page · cuttable | 2 |
@@ -87,9 +87,9 @@ implementation steps inside the ticket, split into BE and FE lines. Labels: `FE`
 
 | Key | Ticket | Side | Draft steps | h |
 |---|---|---|---|---|
-| ZEY-34 | T5.1 The home page shows the farm and the product categories | FE | New home page from the H5 sketches; olive-oil-only sections leave it; the current testimonials stay for now | 4 |
-| ZEY-35 | T5.2 Header and Hero links go to the right places | FE | Fix `#satinal`, `#hakkimizda`, `#iletisim` | 1 |
-| ZEY-36 | T5.3 A visitor sees the contact details | FE | Contact section | 1.5 |
+| ZEY-34 | T5.1 The home page shows the farm and the product categories | FE+BE | New home page from the H5 sketches; product `category` field for the category cards; the current logo moves into a `Logo` component; what happens to the olive-oil-only sections is decided here; the current testimonials stay for now | 4 |
+| ZEY-35 | T5.2 Header and Hero links go to the right places | FE | Fix `#satinal`, `#hakkimizda`; `#iletisim` goes to the footer | 1 |
+| ZEY-36 | T5.3 A visitor sees the contact details | FE | Contact details in the footer, no separate section | 1.5 |
 
 ## Sprints
 
