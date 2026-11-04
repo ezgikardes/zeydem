@@ -4,8 +4,9 @@ Issue: #20 · Jira: ZEY-12 · Sketch: `docs/features/design/sketches/02-product-
 
 The first ticket with a backend. The visitor opens `/urunler` and sees the products on sale, read
 from the database. The exact request and response live in the OpenAPI contract
-(`backend/src/main/resources/openapi/products.yaml`); this spec says what they mean and how they
-must behave.
+(`contracts/openapi.yaml`, shared by both sides, one file for every endpoint); this spec says what
+they mean and how they must behave. No library checks answers against that file: the backend
+test checks the exact fields and their types, and the two are kept in step by hand.
 
 ## Interface
 
