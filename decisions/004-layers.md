@@ -19,12 +19,15 @@ test enforces.
 
 ```mermaid
 flowchart TD
-    controller["controller<br/>HTTP in and out, DTOs,<br/>errors as ProblemDetail"]
+    controller["controller<br/>HTTP in and out,<br/>errors as ProblemDetail"]
     service["service<br/>the rules; turns entities into DTOs"]
     repository["repository<br/>Spring Data interfaces"]
     domain["domain<br/>JPA entities"]
+    dto["dto<br/>the shape of each answer"]
 
     controller --> service
+    controller --> dto
+    service --> dto
     service --> repository
     service --> domain
     repository --> domain
@@ -32,13 +35,15 @@ flowchart TD
 
 - A controller calls only services. It never sees a repository or an entity.
 - A service returns DTOs, so an entity never leaves the service and repository layers.
-- The DTOs (`ProductResponse`…) and the one handler that turns every error into a
-  `ProblemDetail` live in `controller`, because they are the shape of the HTTP answer.
+- The DTOs (`ProductResponse`…) live in their own `dto` package, next to the others: both the
+  controller and the service use them, so they belong to neither. A DTO depends on nothing in
+  the other layers; it is the shape of the HTTP answer, written as a record.
+- The one handler that turns every error into a `ProblemDetail` lives in `controller`.
 - An ArchUnit test checks the arrows. A class that breaks one turns the build red and is named
   in the failure.
 
 **Why this option:**
-- The MVP has few features (products, orders, login); four packages stay small and each layer
+- The MVP has few features (products, orders, login); five packages stay small and each layer
   can be read in one place.
 - Layers by package give ArchUnit a simple rule to check: "classes in `..controller..` do not
   depend on `..repository..` or `..domain..`".
@@ -48,7 +53,7 @@ flowchart TD
 ArchUnit fails the build on a controller that calls a repository.
 
 **Trade-off accepted:**
-- One feature is spread over four packages; a change to products touches several folders.
+- One feature is spread over five packages; a change to products touches several folders.
 - A service maps every entity to a DTO, even when the two look the same today.
 - Package by layer gets crowded as features grow.
 
