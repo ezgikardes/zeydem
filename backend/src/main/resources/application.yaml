@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: zeydem
+  # Local secrets (DB_PASSWORD) live in backend/.env, which git ignores. On Render the same
+  # names are set as environment variables and the file does not exist.
+  config:
+    import: optional:file:.env[.properties]
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/zeydem}
+    username: ${DB_USERNAME:zeydem}
+    password: ${DB_PASSWORD}
+  jpa:
+    # Keep the database session inside the service layer: no queries while the answer is
+    # written (decisions/004-layers.md).
+    open-in-view: false
