@@ -5,12 +5,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.json.JsonCompareMode;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 // GET /products as contracts/openapi.yaml describes it. The whole app starts, on zeydem_test.
@@ -21,6 +24,9 @@ class ProductControllerTest {
 
     @Autowired
     MockMvc mockMvc;
+
+    @Autowired
+    JdbcTemplate jdbcTemplate;
 
     @Test
     void listsTheSeedProductsInIdOrderWithExactlyTheContractFields() throws Exception {
@@ -42,5 +48,20 @@ class ProductControllerTest {
                            "price": "320.00", "amount": 500, "unit": "g"}
                         ]
                         """, JsonCompareMode.STRICT));
+    }
+
+    // @Transactional undoes the INSERT when the test ends, so the other tests still see 3 products.
+    @Test
+    @Transactional
+    void showsAProductAddedToTheTableByHand() throws Exception {
+        jdbcTemplate.update("""
+                INSERT INTO products (id, name, photo_url, price, amount, unit)
+                VALUES (4, 'Ceviz', '/products/ceviz-500g.jpg', 280.00, 500, 'g')
+                """);
+
+        mockMvc.perform(get("/products"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(4))
+                .andExpect(jsonPath("$[3].name").value("Ceviz"));
     }
 }
