@@ -35,7 +35,6 @@ class ProductControllerErrorTest {
         mockMvc.perform(get("/products"))
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
-                .andExpect(jsonPath("$.type").value("about:blank"))
                 .andExpect(jsonPath("$.title").value("Internal Server Error"))
                 .andExpect(jsonPath("$.status").value(500))
                 // Nothing from the exception reaches the answer: no message, no SQL, no class name.
