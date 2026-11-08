@@ -42,10 +42,11 @@ On error the backend answers with the matching HTTP status and a `ProblemDetail`
 (`Content-Type: application/problem+json`):
 
 ```json
-{ "type": "about:blank", "title": "Internal Server Error", "status": 500 }
+{ "title": "Internal Server Error", "status": 500, "instance": "/products" }
 ```
 
-Nothing else: no exception message, no stack trace, no SQL.
+No `type`: RFC 9457 reads a missing type as `about:blank`. Nothing else: no exception message,
+no stack trace, no SQL.
 
 ### Frontend
 

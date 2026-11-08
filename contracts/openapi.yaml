@@ -83,14 +83,16 @@ components:
     ProblemDetail:
       type: object
       additionalProperties: false
-      required: [type, title, status]
+      required: [title, status]
       description: >
         The one error shape (RFC 9457). It never carries an exception message, a stack trace,
         SQL or a database name.
       properties:
         type:
           type: string
-          description: A URI naming the kind of problem; "about:blank" when there is no more to say.
+          description: >
+            Optional. A URI naming the kind of problem. Left out when there is no more to say than
+            the status; RFC 9457 reads a missing type as "about:blank".
         title:
           type: string
           description: The standard short text of the HTTP status.
@@ -112,6 +114,6 @@ components:
           schema:
             $ref: '#/components/schemas/ProblemDetail'
           example:
-            type: about:blank
             title: Internal Server Error
             status: 500
+            instance: /products
