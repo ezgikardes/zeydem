@@ -1,0 +1,6 @@
+# Kept out of the image. .env above all: the live passwords come from Render's settings.
+.env
+target/
+.idea/
+.vscode/
+HELP.md
