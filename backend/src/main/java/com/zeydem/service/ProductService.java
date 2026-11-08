@@ -1,22 +1,31 @@
 package com.zeydem.service;
 
+import com.zeydem.domain.Product;
 import com.zeydem.dto.ProductResponse;
+import com.zeydem.repository.ProductRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class ProductService {
 
-    // Written here until a test requires the database.
+    private final ProductRepository productRepository;
+
+    // The entities are turned into DTOs here, inside the transaction
+    @Transactional(readOnly = true)
     public List<ProductResponse> listProducts() {
-        return List.of(
-                new ProductResponse(1L, "Natürel Sızma Zeytinyağı", "/products/zeytinyagi-1l.png",
-                        new BigDecimal("450.00"), new BigDecimal("1"), "L"),
-                new ProductResponse(2L, "Natürel Sızma Zeytinyağı", "/products/zeytinyagi-5l.png",
-                        new BigDecimal("1950.00"), new BigDecimal("5"), "L"),
-                new ProductResponse(3L, "Çiğ Badem", "/products/badem-500g.jpg",
-                        new BigDecimal("320.00"), new BigDecimal("500"), "g"));
+        return productRepository.findAll(Sort.by("id")).stream()
+                .map(product -> ProductService.toResponse(product))
+                .toList();
+    }
+
+    private static ProductResponse toResponse(Product product) {
+        return new ProductResponse(product.getId(), product.getName(), product.getPhotoUrl(),
+                product.getPrice(), product.getAmount(), product.getUnit());
     }
 }
