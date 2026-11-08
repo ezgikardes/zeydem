@@ -7,16 +7,19 @@ import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.json.JsonCompareMode;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-// GET /products as contracts/openapi.yaml describes it. The whole app starts, on zeydem_test.
+// GET /products as contracts/openapi.yaml describes it
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
@@ -30,8 +33,7 @@ class ProductControllerTest {
 
     @Test
     void listsTheSeedProductsInIdOrderWithExactlyTheContractFields() throws Exception {
-        // STRICT: same order, and no field more or less than written here. The price is a
-        // string ("450.00"); a number 450.00 in its place fails the test.
+        // STRICT: same order, and no field more or less than written here. 
         mockMvc.perform(get("/products"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -63,5 +65,15 @@ class ProductControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(4))
                 .andExpect(jsonPath("$[3].name").value("Ceviz"));
+    }
+
+    // The app has already run data.sql once when it started; @Sql runs it a second time
+    @Test
+    @Transactional
+    @Sql(scripts = "/data.sql", config = @SqlConfig(encoding = "UTF-8"))
+    void runningTheSeedAgainKeepsThreeProducts() {
+        Integer count = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM products", Integer.class);
+
+        assertThat(count).isEqualTo(3);
     }
 }
