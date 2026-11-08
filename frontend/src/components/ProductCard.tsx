@@ -1,16 +1,20 @@
 import type { Product } from "../lib/product";
 import { formatAmount, formatPrice } from "../lib/format";
+import styles from "./ProductCard.module.css";
 
 export default function ProductCard({ product }: { product: Product }) {
   return (
-    <article>
+    <article className={styles.card}>
       <img
+        className={styles.photo}
         src={product.photoUrl}
         alt={product.name}
       />
-      <h3>{product.name}</h3>
-      <p>{formatAmount(product.amount, product.unit)}</p>
-      <p>{formatPrice(product.price)}</p>
+      <div className={styles.body}>
+        <h3 className={styles.name}>{product.name}</h3>
+        <p className={styles.amount}>{formatAmount(product.amount, product.unit)}</p>
+        <p className={styles.price}>{formatPrice(product.price)}</p>
+      </div>
     </article>
   );
 }

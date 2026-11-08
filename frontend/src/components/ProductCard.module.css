@@ -1,0 +1,45 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* A square box, so photos of different shapes line up. */
+.photo {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  background: var(--bg-warm);
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 16px 18px 20px;
+}
+
+.name {
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.25;
+  margin: 0;
+}
+
+.amount {
+  margin: 0;
+  font-size: 15px;
+  color: var(--sage-deep);
+}
+
+.price {
+  margin: 8px 0 0;
+  font-size: 19px;
+  font-weight: 600;
+  color: var(--ink);
+}

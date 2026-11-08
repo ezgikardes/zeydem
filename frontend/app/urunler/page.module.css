@@ -1,0 +1,11 @@
+.page {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 48px clamp(16px, 5vw, 56px) 80px;
+}
+
+.title {
+  font-size: clamp(32px, 5vw, 48px);
+  font-weight: 600;
+  margin: 0 0 32px;
+}

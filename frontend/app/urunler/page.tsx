@@ -1,5 +1,6 @@
 import ProductGrid from "../../src/components/ProductGrid";
 import type { Product } from "../../src/lib/product";
+import styles from "./page.module.css";
 
 // Render on every visit, not once at build time
 export const dynamic = "force-dynamic";
@@ -10,8 +11,8 @@ export default async function ProductsPage() {
   const products: Product[] = await response.json();
 
   return (
-    <main>
-      <h1>Ürünlerimiz</h1>
+    <main className={styles.page}>
+      <h1 className={styles.title}>Ürünlerimiz</h1>
       <ProductGrid products={products} />
     </main>
   );

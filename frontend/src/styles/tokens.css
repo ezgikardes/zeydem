@@ -1,0 +1,27 @@
+/* Colours and fonts of docs/features/design/design-system.md.
+   On a class, not :root, so the home page keeps its own --brand until ZEY-34. */
+.design-system {
+  --ink: #2a211a;
+  --brand: #4a3524;
+  --sage: #8a9a6b;
+  --sage-deep: #5e6f43;
+  --honey: #c99b52;
+  --surface: #ffffff;
+  --bg: #f6f3ec;
+  --bg-warm: #f3e3c8;
+  --line: #dcd3c2;
+
+  /* --font-display and --font-body come from next/font in app/urunler/layout.tsx. */
+  font-family: var(--font-body), system-ui, sans-serif;
+  font-size: 17px;
+  color: var(--ink);
+  background: var(--bg);
+  min-height: 100vh;
+}
+
+.design-system h1,
+.design-system h2,
+.design-system h3 {
+  font-family: var(--font-display), Georgia, serif;
+  color: var(--brand);
+}
