@@ -69,6 +69,11 @@ no stack trace, no SQL.
 - **Colours and fonts** come from the design system: the colours as CSS variables in one tokens
   file, Fraunces for headings and Inter for body through `next/font`. No component writes a
   colour value directly.
+- **Only the new pages use them for now.** The home page's stylesheet already has a `--brand`
+  (olive green) that the design system's `--brand` (walnut brown) would replace. So the tokens
+  and fonts are set on a class that `/urunler` puts on its outer element, not on the whole site,
+  and the home page keeps its look. When the home page moves to the design system (ZEY-34), the
+  class moves up to the layout.
 
 ### Data
 
