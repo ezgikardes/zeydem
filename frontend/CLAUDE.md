@@ -8,12 +8,23 @@ The Next.js site. Repo-wide rules are in `../CLAUDE.md`.
   component can be tested without a database or the backend.
 - **Interface text is Turkish.** English is planned as a second language; do not hardcode English
   strings in components.
+- **Only pages talk to the backend.** A page fetches `${BACKEND_URL}/…` on the server and passes
+  the result down as props. `BACKEND_URL` has no `NEXT_PUBLIC_` prefix, so it never reaches the
+  browser. Locally it lives in `.env.local` (`BACKEND_URL=http://localhost:8080`, ignored by git).
+- **Colours come from the design tokens.** `src/styles/tokens.css` defines them on the
+  `.design-system` class, not on `:root`, so the home page keeps its own `--brand` until ZEY-34.
+  Components use `var(--…)` and never write a colour value; their styles are CSS Modules.
+- **Tests sit next to the code** they test (`format.ts` / `format.test.ts`).
 
 ## Shape
 
 ```
 app/                Next.js entry: layout.tsx (HTML shell) and page.tsx (the home page)
+app/urunler/        the product list: page.tsx fetches, layout.tsx sets the design system and fonts
 src/components/     presentational React components
+src/lib/            plain functions and types shared by components (formatting, Product); no React
+src/styles/         tokens.css, the colours of docs/features/design/design-system.md
+public/products/    product photos; the database stores only their paths
 tests/              Jest setup and mocks for styles and images
 ```
 
@@ -27,6 +38,9 @@ npm run dev       # Next.js dev server, port 3000
 npm run build     # production build
 npm run lint      # ESLint
 ```
+
+`npm run dev` and `npm run build` write to the same `.next` folder: stop the dev server before a
+build, or its styles break until `.next` is deleted.
 
 ## Next.js notes
 

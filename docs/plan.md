@@ -22,7 +22,8 @@ logs in and sees the orders in one list. The site is live on the internet. Deliv
 email, marking an order as shipped.
 
 **After delivery:** Docker for the local database and the backend tests (Testcontainers), ZEY-37;
-real testimonials replace the current ones.
+the first visit no longer waits for the sleeping backend, ZEY-38; real testimonials replace the
+current ones.
 
 ## How work is broken down
 
@@ -45,7 +46,7 @@ implementation steps inside the ticket, split into BE and FE lines. Labels: `FE`
 
 | Key | Ticket | Side | Draft steps | h |
 |---|---|---|---|---|
-| ZEY-12 | T1.1 A visitor sees the product list with name, photo and price | FE+BE | **BE:** decision 003 (Java backend); Spring Boot skeleton with Maven; layer packages + decision 004 (course week 5); product table + sample data: PostgreSQL (Homebrew locally, Neon live), schema created by Hibernate, idempotent seed SQL; prices in TL as `NUMERIC(10,2)` / `BigDecimal`, decision 005; amount and unit as separate fields; the contract for `GET /products`, errors included, written before either side; `GET /products` + test; layer boundaries checked by ArchUnit. **FE:** design tokens and fonts from the design system; `/urunler` page fetches on the server; test. **Deploy:** BE on Render; the FE on Vercel reads from it | 14 |
+| ZEY-12 | T1.1 A visitor sees the product list with name, photo and price | FE+BE | **BE:** decision 003 (Java backend); Spring Boot skeleton with Maven; layer packages + decision 004 (course week 5); product table + sample data: PostgreSQL (the EDB installer locally, Neon live), schema created by Hibernate, idempotent seed SQL; prices in TL as `NUMERIC(10,2)` / `BigDecimal`, decision 005; amount and unit as separate fields; the contract for `GET /products`, errors included, written before either side; `GET /products` + test; layer boundaries checked by ArchUnit. **FE:** design tokens and fonts from the design system; `/urunler` page fetches on the server; test. **Deploy:** BE on Render; the FE on Vercel reads from it | 14 |
 | ZEY-13 | T1.2 A visitor opens a product's detail page | FE+BE | **BE:** `slug` and `description` fields; `GET /products/{slug}`. **FE:** `/urunler/[slug]`; list cards link to it | 4 |
 | ZEY-14 | T1.3 With no products on sale, the visitor sees "Henüz ürün yok" | FE | Empty state + test | 1 |
 | ZEY-15 | T1.4 If products cannot load, the visitor sees an error | FE | Error state + test | 2 |

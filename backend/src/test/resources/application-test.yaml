@@ -1,0 +1,4 @@
+# Active in tests through @ActiveProfiles("test"): the tests never touch the zeydem database.
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/zeydem_test

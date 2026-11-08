@@ -1,0 +1,24 @@
+# Render says which port to listen on through PORT; locally it stays 8080.
+server:
+  port: ${PORT:8080}
+
+spring:
+  application:
+    name: zeydem
+  config:
+    import: optional:file:.env[.properties]
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/zeydem}
+    username: ${DB_USERNAME:zeydem}
+    password: ${DB_PASSWORD}
+  jpa:
+    # Keep the database session inside the service layer
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
+    defer-datasource-initialization: true
+  sql:
+    init:
+      mode: always
+      # Read the Turkish letters right whatever the server's default encoding is.
+      encoding: UTF-8

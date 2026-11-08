@@ -1,0 +1,119 @@
+openapi: 3.1.0
+info:
+  title: Zeydem API
+  version: 0.1.0
+  description: >
+    The contract between the Next.js server and the Spring Boot backend. Written before either
+    side's code; the frontend reads only the fields described here. The browser never calls
+    this API (docs/architecture.md, "Boundaries").
+
+servers:
+  - url: http://localhost:8080
+    description: Local backend. The live address is a server-only setting of the frontend.
+
+paths:
+  /products:
+    get:
+      summary: Every product on sale
+      description: >
+        Takes no parameters; unknown query parameters are ignored. Products are ordered by id.
+        An empty array means there are no products; an error is never sent as an empty array.
+      operationId: listProducts
+      responses:
+        '200':
+          description: The products, ordered by id. May be empty.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+              example:
+                - id: 1
+                  name: Natürel Sızma Zeytinyağı
+                  photoUrl: /products/zeytinyagi-1l.png
+                  price: '450.00'
+                  amount: 1
+                  unit: L
+                - id: 3
+                  name: Çiğ Badem
+                  photoUrl: /products/badem-500g.jpg
+                  price: '320.00'
+                  amount: 500
+                  unit: g
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+components:
+  schemas:
+    Product:
+      type: object
+      additionalProperties: false
+      required: [id, name, photoUrl, price, amount, unit]
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Stable identifier.
+        name:
+          type: string
+          minLength: 1
+          description: Display name, in Turkish.
+        photoUrl:
+          type: string
+          pattern: '^/'
+          description: >
+            Path of the photo on the website, starting with "/". The file is served by the
+            frontend from frontend/public/.
+        price:
+          type: string
+          pattern: '^[0-9]+\.[0-9]{2}$'
+          description: >
+            Price in TL with exactly two decimals and "." as the separator, as a string so it is
+            never read as a floating-point number (decisions/005-prices.md).
+        amount:
+          type: number
+          exclusiveMinimum: 0
+          description: How much is in the package, up to two decimals (1, 0.5, 500).
+        unit:
+          type: string
+          enum: [L, g, kg]
+          description: The unit of amount.
+
+    ProblemDetail:
+      type: object
+      additionalProperties: false
+      required: [title, status]
+      description: >
+        The one error shape (RFC 9457). It never carries an exception message, a stack trace,
+        SQL or a database name.
+      properties:
+        type:
+          type: string
+          description: >
+            Optional. A URI naming the kind of problem. Left out when there is no more to say than
+            the status; RFC 9457 reads a missing type as "about:blank".
+        title:
+          type: string
+          description: The standard short text of the HTTP status.
+        status:
+          type: integer
+          description: The HTTP status code, repeated in the body.
+        detail:
+          type: string
+          description: Optional. A sentence for the person reading logs, written by us.
+        instance:
+          type: string
+          description: Optional. The path of the request that failed.
+
+  responses:
+    InternalError:
+      description: The backend could not answer, for example because the database is unreachable.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetail'
+          example:
+            title: Internal Server Error
+            status: 500
+            instance: /products
