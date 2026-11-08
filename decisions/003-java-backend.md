@@ -22,7 +22,7 @@ learned.
 |---|---|
 | Language, framework | Java 17, Spring Boot (the current line that runs on Java 17; exact version from Spring Initializr) |
 | Build | Maven, run through the Maven wrapper (`./mvnw`) so no global install is needed |
-| Database | PostgreSQL: Homebrew locally, Neon live |
+| Database | PostgreSQL 18: the EDB installer locally, Neon live |
 | Schema | Created by Hibernate from the entities (`ddl-auto=update`) |
 | Sample data | One seed SQL file that runs at every start and never duplicates a row |
 | Tests | JUnit; against a separate local test database until Testcontainers arrives (ZEY-37) |

@@ -19,7 +19,8 @@ Live: https://zeydem.vercel.app
 
 - **Frontend:** Next.js 15 · React 19 · TypeScript · Jest, deployed on Vercel from `main`. Pages
   are rendered on the server, so search engines receive the content as HTML.
-- **Backend:** Java 17 · Spring Boot (coming with ZEY-12).
+- **Backend:** Java 17 · Spring Boot · Maven · PostgreSQL, deployed on Render from a `Dockerfile`;
+  the live database is on Neon. The browser never calls it: the Next.js server does.
 
 ## Commands
 
@@ -29,7 +30,7 @@ Run them inside `frontend/`.
 cd frontend
 npm install     # install the packages, once
 npm run dev     # start the site locally on http://localhost:3000
-npm test        # run the tests (they return with ZEY-12)
+npm test        # run the tests
 npm run lint    # check the code with ESLint
 npm run build   # production build
 npm start       # serve the production build
@@ -38,7 +39,8 @@ npm start       # serve the production build
 ## Repo
 
 - `frontend/` — the Next.js site
-- `backend/` — the Spring Boot service (coming)
+- `backend/` — the Spring Boot service (commands in `backend/CLAUDE.md`)
+- `contracts/` — the OpenAPI contract between the two
 
 ## Documentation
 

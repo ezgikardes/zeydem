@@ -4,7 +4,7 @@ Zeydem is the online shop of a family farm in Manisa: olive oil and almonds, wal
 It is a learning project as well as a real shop, so **explaining beats finishing**.
 
 This file holds what applies to the whole repo. Each app has its own notes:
-`frontend/CLAUDE.md` for the Next.js site, `backend/CLAUDE.md` once the backend exists.
+`frontend/CLAUDE.md` for the Next.js site, `backend/CLAUDE.md` for the Spring Boot service.
 
 ## How to work here
 
@@ -65,7 +65,8 @@ Never split something indivisible across commits; a coarser commit (a whole suit
 
 ```
 frontend/           Next.js site (see frontend/CLAUDE.md)
-backend/            Spring Boot service (arrives with ticket ZEY-12)
+backend/            Spring Boot service (see backend/CLAUDE.md)
+contracts/          OpenAPI contract shared by both sides, one file for every endpoint
 docs/features/      one folder per feature, with its spec; _template.md to start from
 docs/plan.md        the MVP plan
 decisions/          architecture decision records (ADR); _template.md to start from

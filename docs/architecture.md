@@ -52,7 +52,7 @@ flowchart LR
 | Spring Boot backend | Products, orders, the producer login, the payment call | HTML, display text |
 | PostgreSQL | Products, orders, order lines | Card details (they stay with the provider) |
 
-Locally the backend uses a PostgreSQL installed with Homebrew; the live one is on Neon. The
+Locally the backend uses PostgreSQL 18 installed with the EDB installer; the live one is on Neon. The
 schema is created by Hibernate from the entities, and sample products come from an idempotent
 seed SQL (ZEY-12).
 
