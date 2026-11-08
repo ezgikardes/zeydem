@@ -1,3 +1,7 @@
+# Render says which port to listen on through PORT; locally it stays 8080.
+server:
+  port: ${PORT:8080}
+
 spring:
   application:
     name: zeydem
