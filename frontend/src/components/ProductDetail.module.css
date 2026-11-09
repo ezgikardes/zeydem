@@ -1,4 +1,17 @@
-/* Photo and text side by side on wide screens, stacked (photo first) on narrow ones. */
+/* "Ürünler / <name> <amount>" above the product. */
+.breadcrumb {
+  margin: 0 0 24px;
+  font-size: 15px;
+  color: var(--sage-deep);
+}
+
+.crumbLink {
+  color: var(--brand);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* Photo and text side by side on wide screens, stacked on narrow ones. */
 .detail {
   display: grid;
   grid-template-columns: 1fr;
