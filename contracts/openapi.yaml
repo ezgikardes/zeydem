@@ -30,12 +30,14 @@ paths:
                   $ref: '#/components/schemas/Product'
               example:
                 - id: 1
+                  slug: naturel-sizma-zeytinyagi-1l
                   name: Natürel Sızma Zeytinyağı
                   photoUrl: /products/zeytinyagi-1l.png
                   price: '450.00'
                   amount: 1
                   unit: L
                 - id: 3
+                  slug: cig-badem-500g
                   name: Çiğ Badem
                   photoUrl: /products/badem-500g.jpg
                   price: '320.00'
@@ -44,17 +46,55 @@ paths:
         '500':
           $ref: '#/components/responses/InternalError'
 
+  /products/{slug}:
+    get:
+      summary: One product, with its description
+      description: >
+        Finds the product whose slug is exactly the one in the path: no lowercasing, no
+        trimming, no redirect. A slug that does not match the pattern is simply not found.
+      operationId: getProduct
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          description: The product's part of the page address.
+          schema:
+            type: string
+          example: naturel-sizma-zeytinyagi-1l
+      responses:
+        '200':
+          description: The product.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductDetail'
+              example:
+                id: 1
+                slug: naturel-sizma-zeytinyagi-1l
+                name: Natürel Sızma Zeytinyağı
+                photoUrl: /products/zeytinyagi-1l.png
+                price: '450.00'
+                amount: 1
+                unit: L
+                description: Manisa'daki bahçemizden…
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
 components:
   schemas:
     Product:
       type: object
       additionalProperties: false
-      required: [id, name, photoUrl, price, amount, unit]
+      required: [id, slug, name, photoUrl, price, amount, unit]
       properties:
         id:
           type: integer
           format: int64
           description: Stable identifier.
+        slug:
+          $ref: '#/components/schemas/Slug'
         name:
           type: string
           minLength: 1
@@ -79,6 +119,42 @@ components:
           type: string
           enum: [L, g, kg]
           description: The unit of amount.
+
+    ProductDetail:
+      type: object
+      additionalProperties: false
+      description: >
+        A product as its own page shows it: every field of Product, plus the description.
+        Written out in full, not built with allOf, because additionalProperties false on Product
+        would refuse the extra field.
+      required: [id, slug, name, photoUrl, price, amount, unit, description]
+      properties:
+        id:
+          $ref: '#/components/schemas/Product/properties/id'
+        slug:
+          $ref: '#/components/schemas/Slug'
+        name:
+          $ref: '#/components/schemas/Product/properties/name'
+        photoUrl:
+          $ref: '#/components/schemas/Product/properties/photoUrl'
+        price:
+          $ref: '#/components/schemas/Product/properties/price'
+        amount:
+          $ref: '#/components/schemas/Product/properties/amount'
+        unit:
+          $ref: '#/components/schemas/Product/properties/unit'
+        description:
+          type: string
+          minLength: 1
+          description: Plain text in Turkish, no HTML. May hold line breaks, which are shown.
+
+    Slug:
+      type: string
+      pattern: '^[a-z0-9]+(-[a-z0-9]+)*$'
+      description: >
+        The product's part of the page address, unique among products: lowercase ASCII letters,
+        digits and single hyphens, made from the name and the size (naturel-sizma-zeytinyagi-1l).
+        Stored, not computed, so correcting a name does not change the address.
 
     ProblemDetail:
       type: object
@@ -107,6 +183,17 @@ components:
           description: Optional. The path of the request that failed.
 
   responses:
+    NotFound:
+      description: No product has this slug.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetail'
+          example:
+            title: Not Found
+            status: 404
+            instance: /products/zeytin-ezmesi
+
     InternalError:
       description: The backend could not answer, for example because the database is unreachable.
       content:
