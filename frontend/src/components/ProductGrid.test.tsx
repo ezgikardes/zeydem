@@ -6,6 +6,7 @@ import type { Product } from "../lib/product";
 const products: Product[] = [
   {
     id: 1,
+    slug: "naturel-sizma-zeytinyagi-1l",
     name: "Natürel Sızma Zeytinyağı",
     photoUrl: "/products/zeytinyagi-1l.png",
     price: "450.00",
@@ -14,6 +15,7 @@ const products: Product[] = [
   },
   {
     id: 2,
+    slug: "naturel-sizma-zeytinyagi-5l",
     name: "Natürel Sızma Zeytinyağı",
     photoUrl: "/products/zeytinyagi-5l.png",
     price: "1950.00",
@@ -22,6 +24,7 @@ const products: Product[] = [
   },
   {
     id: 3,
+    slug: "cig-badem-500g",
     name: "Çiğ Badem",
     photoUrl: "/products/badem-500g.jpg",
     price: "320.00",
@@ -70,5 +73,16 @@ describe("ProductGrid", () => {
         product.photo,
       );
     });
+  });
+
+  it("links each card to the product's own page", () => {
+    render(<ProductGrid products={products} />);
+
+    const links = screen.getAllByRole("link");
+    expect(links.map((link) => link.getAttribute("href"))).toEqual([
+      "/urunler/naturel-sizma-zeytinyagi-1l",
+      "/urunler/naturel-sizma-zeytinyagi-5l",
+      "/urunler/cig-badem-500g",
+    ]);
   });
 });
