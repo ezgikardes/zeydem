@@ -21,6 +21,7 @@ The Next.js site. Repo-wide rules are in `../CLAUDE.md`.
 ```
 app/                Next.js entry: layout.tsx (HTML shell) and page.tsx (the home page)
 app/urunler/        the product list: page.tsx fetches, layout.tsx sets the design system and fonts
+app/urunler/[slug]/ one product's page: page.tsx fetches the product named in the address
 src/components/     presentational React components
 src/lib/            plain functions and types shared by components (formatting, Product); no React
 src/styles/         tokens.css, the colours of docs/features/design/design-system.md
@@ -48,3 +49,6 @@ build, or its styles break until `.next` is deleted.
   component that needs state, effects or event handlers.
 - An imported image is an object in Next.js: pass `photo.src` to `<img>`, not `photo`.
 - Never name a folder `pages`. Next.js reads it as the older routing system.
+- A folder is a part of the address and `page.tsx` is the page there. A folder in brackets
+  (`[slug]`) matches any value; the page reads it from `params`, which Next.js 15 passes as a
+  promise to `await`.

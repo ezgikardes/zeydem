@@ -95,9 +95,12 @@ The sample rows, as the seed writes them into a new database:
 
 | id | slug | description |
 |---|---|---|
-| 1 | `naturel-sizma-zeytinyagi-1l` | _(to be written)_ |
-| 2 | `naturel-sizma-zeytinyagi-5l` | _(to be written)_ |
-| 3 | `cig-badem-500g` | _(to be written)_ |
+| 1 | `naturel-sizma-zeytinyagi-1l` | placeholder |
+| 2 | `naturel-sizma-zeytinyagi-5l` | placeholder |
+| 3 | `cig-badem-500g` | placeholder |
+
+The descriptions in `data.sql` are placeholders until the real texts are written. A new text then
+goes into `data.sql` and, by hand, into every existing database (the seed does not update rows).
 
 **Existing databases** (local `zeydem`, local `zeydem_test`, Neon) already hold these rows
 without the new columns. Hibernate would add the columns but not fill them, and the seed does
