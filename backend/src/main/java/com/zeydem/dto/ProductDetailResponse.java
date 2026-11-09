@@ -1,0 +1,17 @@
+package com.zeydem.dto;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import java.math.BigDecimal;
+
+// One product in the answer of GET /products/{slug}
+public record ProductDetailResponse(
+        Long id,
+        String slug,
+        String name,
+        String photoUrl,
+        @JsonFormat(shape = JsonFormat.Shape.STRING) BigDecimal price,
+        BigDecimal amount,
+        String unit,
+        String description) {
+}

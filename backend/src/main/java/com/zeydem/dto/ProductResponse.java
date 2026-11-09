@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 // One product in the answer of GET /products.
 public record ProductResponse(
         Long id,
+        String slug,
         String name,
         String photoUrl,
         @JsonFormat(shape = JsonFormat.Shape.STRING) BigDecimal price,

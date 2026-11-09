@@ -1,6 +1,7 @@
 package com.zeydem.service;
 
 import com.zeydem.domain.Product;
+import com.zeydem.dto.ProductDetailResponse;
 import com.zeydem.dto.ProductResponse;
 import com.zeydem.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,8 +25,21 @@ public class ProductService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
+    public ProductDetailResponse getProduct(String slug) {
+        return productRepository.findBySlug(slug)
+                .map(product -> ProductService.toDetailResponse(product))
+                .orElseThrow(() -> new ProductNotFoundException(slug));
+    }
+
     private static ProductResponse toResponse(Product product) {
-        return new ProductResponse(product.getId(), product.getName(), product.getPhotoUrl(),
-                product.getPrice(), product.getAmount(), product.getUnit());
+        return new ProductResponse(product.getId(), product.getSlug(), product.getName(),
+                product.getPhotoUrl(), product.getPrice(), product.getAmount(), product.getUnit());
+    }
+
+    private static ProductDetailResponse toDetailResponse(Product product) {
+        return new ProductDetailResponse(product.getId(), product.getSlug(), product.getName(),
+                product.getPhotoUrl(), product.getPrice(), product.getAmount(), product.getUnit(),
+                product.getDescription());
     }
 }

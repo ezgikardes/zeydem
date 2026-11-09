@@ -1,0 +1,76 @@
+/* "Ürünler / <name> <amount>" above the product. */
+.breadcrumb {
+  margin: 0 0 24px;
+  font-size: 15px;
+  color: var(--sage-deep);
+}
+
+.crumbLink {
+  color: var(--brand);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* Photo and text side by side on wide screens, stacked on narrow ones. */
+.detail {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+}
+
+@media (min-width: 768px) {
+  .detail {
+    grid-template-columns: 1fr 1fr;
+    gap: 56px;
+    align-items: start;
+  }
+}
+
+.photo {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  background: var(--bg-warm);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.name {
+  font-size: clamp(30px, 4vw, 42px);
+  font-weight: 600;
+  line-height: 1.15;
+  margin: 0;
+}
+
+.amount {
+  margin: 0;
+  font-size: 18px;
+  color: var(--sage-deep);
+}
+
+.price {
+  margin: 12px 0 0;
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.heading {
+  margin: 32px 0 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+/* Keeps the line breaks written in the description. */
+.description {
+  margin: 0;
+  line-height: 1.6;
+  white-space: pre-line;
+}

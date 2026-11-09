@@ -11,6 +11,7 @@ beforeEach(() => {
     json: async () => [
       {
         id: 1,
+        slug: "naturel-sizma-zeytinyagi-1l",
         name: "Natürel Sızma Zeytinyağı",
         photoUrl: "/products/zeytinyagi-1l.png",
         price: "450.00",
@@ -19,6 +20,7 @@ beforeEach(() => {
       },
       {
         id: 3,
+        slug: "cig-badem-500g",
         name: "Çiğ Badem",
         photoUrl: "/products/badem-500g.jpg",
         price: "320.00",
