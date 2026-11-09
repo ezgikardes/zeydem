@@ -1,5 +1,6 @@
 package com.zeydem.controller;
 
+import com.zeydem.service.ProductNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
@@ -11,6 +12,11 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @Slf4j
 @RestControllerAdvice
 public class ProblemDetailHandler extends ResponseEntityExceptionHandler {
+
+    @ExceptionHandler(ProductNotFoundException.class)
+    public ProblemDetail handleProductNotFound() {
+        return ProblemDetail.forStatus(HttpStatus.NOT_FOUND);
+    }
 
     @ExceptionHandler(Exception.class)
     public ProblemDetail handleUnexpected(Exception exception) {
