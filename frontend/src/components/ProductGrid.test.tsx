@@ -40,7 +40,7 @@ describe("ProductGrid", () => {
     const cards = screen.getAllByRole("listitem");
     expect(cards).toHaveLength(3);
 
-    // What each product above should look like on screen, card by card.
+    // What each product above should look like on screen
     const expected = [
       {
         name: "Natürel Sızma Zeytinyağı",
@@ -84,5 +84,16 @@ describe("ProductGrid", () => {
       "/urunler/naturel-sizma-zeytinyagi-5l",
       "/urunler/cig-badem-500g",
     ]);
+  });
+
+  it("says there are no products yet when the list is empty", () => {
+    render(<ProductGrid products={[]} />);
+
+    expect(screen.getByText("Henüz ürün yok")).toBeInTheDocument();
+    expect(
+      screen.getByText("Yeni hasat ürünleri yakında burada olacak."),
+    ).toBeInTheDocument();
+    // queryAll returns [] instead of throwing
+    expect(screen.queryAllByRole("listitem")).toHaveLength(0);
   });
 });
