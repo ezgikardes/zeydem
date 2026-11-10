@@ -62,8 +62,10 @@ message, no stack trace, no SQL).
 - **It renders on every request.** A page whose address has a part in brackets is rendered when
   it is asked for, unless it lists its addresses in advance (`generateStaticParams`); it does
   not, so nothing is built ahead and the build does not need the backend.
-- **When the answer is not `200`,** the page throws, so Next.js shows its default error page
-  instead of a page with an empty name and price. The "Ürün bulunamadı" page is ZEY-16.
+- **When the answer is not `200`,** the page throws instead of showing a page with an empty name
+  and price. Since ZEY-15 the request has the same 20 s limit as the list, and what the page
+  throws is caught by `app/urunler/error.tsx` (product-list spec). The "Ürün bulunamadı" page is
+  ZEY-16.
 - **`ProductDetail({ product })`** shows, from top to bottom (sketch 03):
   - the breadcrumb: a link "Ürünler" to `/urunler`, then the product's name and amount, plain
     text (`Ürünler / Natürel Sızma Zeytinyağı 1 L`), inside a `nav` whose label is "Sayfa yolu"
@@ -144,12 +146,13 @@ ALTER TABLE products ALTER COLUMN slug SET NOT NULL, ALTER COLUMN description SE
 
 ## Failure modes
 
-- **Unknown slug:** the backend answers `404` as above. The frontend throws and Next.js shows
-  its default error page; the visitor-facing "Ürün bulunamadı" page is ZEY-16.
-- **The database does not answer:** `500` with a `ProblemDetail`, no retry. The page throws, as
-  above; a visitor-facing message is not part of this ticket.
-- **The backend does not answer:** the fetch fails and Next.js shows its default error page. A
-  sleeping Render instance makes the first visit wait 30–60 s, as in ZEY-12.
+- **Unknown slug:** the backend answers `404` as above. The page throws and, since ZEY-15, the
+  visitor sees "Ürünler şu an yüklenemedi." (`app/urunler/error.tsx`). That text is wrong for a
+  missing product; the "Ürün bulunamadı" page is ZEY-16.
+- **The database does not answer:** `500` with a `ProblemDetail`, no retry. The page throws and
+  the visitor sees the same message.
+- **The backend does not answer:** since ZEY-15 the request is cancelled after 20 s, the page
+  throws and the visitor sees the same message. See the product-list spec, "Failure modes".
 
 ## Checks
 
@@ -178,6 +181,8 @@ Frontend:
   **When** the page renders **Then** it has called `${BACKEND_URL}/products/cig-badem-500g` and
   shows the product.
 - **Given** a backend that answers `404` **When** the page renders **Then** it throws.
+- **Given** the address `/urunler/cig-badem-500g` **When** the page renders **Then** its request
+  carries the 20 s limit (ZEY-15).
 
 Live:
 - **Given** the deployed site **When** I click a card on `/urunler` **Then** the product's page
