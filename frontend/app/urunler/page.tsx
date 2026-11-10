@@ -11,7 +11,15 @@ export default async function ProductsPage() {
   const response = await fetch(`${process.env.BACKEND_URL}/products`, {
     signal: AbortSignal.timeout(BACKEND_TIMEOUT_MS),
   });
-  const products: Product[] = await response.json();
+  if (!response.ok) {
+    throw new Error(`Backend answered ${response.status} for /products`);
+  }
+  const body: unknown = await response.json();
+  // Only checks that a list came back
+  if (!Array.isArray(body)) {
+    throw new Error("Backend did not answer a list for /products");
+  }
+  const products: Product[] = body;
 
   return (
     <main className={styles.page}>
