@@ -2,6 +2,7 @@
 
 Issue: #20 · Jira: ZEY-12 · Sketch: `docs/features/design/sketches/02-product-list.png`
 Extended by ZEY-14 (issue #24): what the visitor sees when there are no products.
+Extended by ZEY-15 (issue #26): what the visitor sees when the products cannot be loaded.
 
 The first ticket with a backend. The visitor opens `/urunler` and sees the products on sale, read
 from the database. The exact request and response live in the OpenAPI contract
@@ -65,6 +66,24 @@ no stack trace, no SQL.
   ürünleri yakında burada olacak." in place of the list. The page heading "Ürünlerimiz" stays.
   The message lives in `ProductGrid`, not in the page, because the grid is what knows the list
   is empty and it can be tested with props alone; the page stays a fetch and a hand-over.
+- **When the products cannot be loaded,** the page throws instead of rendering. It throws when
+  the fetch fails (no connection, or no answer within 20 s), when the answer is not `200`, and
+  when the body is not a JSON array. The 20 s limit is set on the request itself
+  (`AbortSignal.timeout(20_000)`); when it runs out the fetch is cancelled and fails like a lost
+  connection. 20 s, not less, because a sleeping Render instance takes 30–60 s to wake: a shorter
+  limit would show the error to almost every first visitor, a longer one keeps them on a blank
+  screen. The fields inside each product are not checked one by one.
+- **`app/urunler/error.tsx`** catches what the pages under `/urunler` throw (the list and the
+  detail page) and shows, in place of the page:
+  - "Ürünler şu an yüklenemedi." as the page's heading
+  - "Birazdan tekrar deneyin." below it
+  - a "Tekrar dene" button
+  The layout stays around it, so the design system's colours and fonts apply. The message never
+  shows the error's text: on the live site Next.js hides it anyway, and it would only mean
+  something to us.
+- **"Tekrar dene"** asks the server for the page again (`router.refresh()`) and then clears the
+  error (`reset()`). Calling only `reset()` would draw the same failed page again without asking
+  the backend. Nothing retries on its own.
 - **Display formats:**
   - amount in Turkish format without trailing zeros, joined to the unit with a space: `1 L`,
     `0,5 L`, `500 g`
@@ -125,10 +144,15 @@ the real photo replaces the file and no row has to change.
 - **Invalid input:** there is no input. Unknown query parameters are ignored.
 - **The database does not answer:** the backend answers `500` with a `ProblemDetail`, as above.
   It does not retry.
-- **The backend does not answer or answers an error:** the page's fetch fails and Next.js shows
-  its default error page. The visitor-facing message ("Ürünler yüklenemedi…"), a wait limit and
-  the check of the answer's shape are ZEY-15. Render's free plan may take 30–60 s to wake up;
-  that delay is accepted here, not hidden.
+- **The backend does not answer:** the page waits at most 20 s, then throws. No connection at
+  all throws at once. The visitor sees "Ürünler şu an yüklenemedi." with a "Tekrar dene" button,
+  never Next.js's English error page. No automatic retry.
+- **The backend answers an error** (any status but `200`): the page throws and the visitor sees
+  the same message.
+- **The answer is not a list** (an object, `null`, or not JSON at all): the page throws and the
+  visitor sees the same message, instead of a broken page.
+- **The wait itself:** while the backend wakes up the screen stays blank, up to 20 s. A loading
+  screen is ZEY-38; keeping the backend awake is not planned.
 - **A photo file is missing:** the card shows a broken image. Paths come from the database, so
   the build cannot catch this; the seed paths are checked by eye once, on the live site.
 
@@ -157,11 +181,26 @@ Frontend:
   **Then** the results are `1 L`, `0,5 L` and `500 g`.
 - **Given** the price `"1950.00"` **When** it is formatted **Then** the result is `1.950,00 TL`.
 - **Given** the backend answers with a list **When** the `/urunler` page renders **Then** it has
-  called `${BACKEND_URL}/products` and shows a card per product.
+  called `${BACKEND_URL}/products` with a 20 s limit and shows a card per product.
+- **Given** the backend answers `500` **When** the `/urunler` page renders **Then** it throws.
+- **Given** the backend answers `200` with something that is not an array **When** the page
+  renders **Then** it throws.
+- **Given** the fetch fails (no connection, or the limit ran out) **When** the page renders
+  **Then** it throws.
+- **Given** an error **When** `error.tsx` renders **Then** it shows "Ürünler şu an
+  yüklenemedi.", "Birazdan tekrar deneyin." and a "Tekrar dene" button, and not the error's text.
+- **Given** the error screen **When** "Tekrar dene" is pressed **Then** the page is asked for
+  again (`router.refresh()`) and the error is cleared (`reset()`).
 
 Live:
 - **Given** the deployed site **When** I open `/urunler` **Then** I see the three sample products.
 - **Given** a product added to the Neon database **When** I reload `/urunler` **Then** I see it.
+
+Local, by hand (the live backend cannot be stopped on purpose):
+- **Given** the backend is stopped **When** I open `/urunler` **Then** I see "Ürünler şu an
+  yüklenemedi." and "Tekrar dene", not an English error page.
+- **Given** that screen and the backend started again **When** I press "Tekrar dene" **Then** I
+  see the products.
 
 ## Must still work
 
@@ -171,7 +210,7 @@ Live:
 
 ## Out of scope
 
-The product detail page (ZEY-13), the visitor-facing error message
-(ZEY-15), the "Sepete ekle" button and the header cart count (ZEY-17), stock and "Tükendi"
+The product detail page (ZEY-13), the "Ürün bulunamadı" page (ZEY-16), a loading screen while
+waiting (ZEY-38), keeping the backend awake, automatic retry, the "Sepete ekle" button and the header cart count (ZEY-17), stock and "Tükendi"
 (ZEY-19), the new home page and header (ZEY-34), Docker locally (ZEY-37), adding or editing
 products from the interface, price per litre or kilo.
