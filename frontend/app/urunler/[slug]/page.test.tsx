@@ -32,9 +32,25 @@ describe("/urunler/[slug]", () => {
 
     render(await ProductPage({ params }));
 
-    expect(fetchMock).toHaveBeenCalledWith("http://backend.test/products/cig-badem-500g");
+    expect(fetchMock).toHaveBeenCalledWith("http://backend.test/products/cig-badem-500g", {
+      signal: expect.any(AbortSignal),
+    });
     expect(screen.getByRole("heading", { level: 1, name: "Çiğ Badem" })).toBeInTheDocument();
     expect(screen.getByText("Bahçemizden toplanan çiğ badem.")).toBeInTheDocument();
+  });
+
+  it("asks the backend with a 20 s limit", async () => {
+    const timeoutSpy = jest.spyOn(AbortSignal, "timeout");
+    fetchMock.mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: async () => ({ id: 3, slug: "cig-badem-500g", name: "Çiğ Badem" }),
+    });
+
+    await ProductPage({ params });
+
+    expect(timeoutSpy).toHaveBeenCalledWith(20_000);
+    timeoutSpy.mockRestore();
   });
 
   // The "Ürün bulunamadı" page is ZEY-16; until then a 404 must not draw an empty product.
