@@ -1,6 +1,7 @@
 # ZEY-12: A visitor sees the product list with name, photo and price
 
 Issue: #20 · Jira: ZEY-12 · Sketch: `docs/features/design/sketches/02-product-list.png`
+Extended by ZEY-14 (issue #24): what the visitor sees when there are no products.
 
 The first ticket with a backend. The visitor opens `/urunler` and sees the products on sale, read
 from the database. The exact request and response live in the OpenAPI contract
@@ -35,8 +36,8 @@ No other field appears. In particular, no database column name and no `createdAt
   missing tables and columns but never changes the type of an existing column, so moving from
   integer to decimal later would mean altering the live table by hand. It is `NUMERIC(8,2)` /
   `BigDecimal`, and a plain JSON number: nobody calculates with it.
-- **An empty list is a valid answer** (`[]`): it means there are no products. What the visitor
-  sees then is ZEY-14.
+- **An empty list is a valid answer** (`[]`): it means there are no products on sale. The page
+  says so (see "An empty list" under Frontend).
 
 On error the backend answers with the matching HTTP status and a `ProblemDetail` body
 (`Content-Type: application/problem+json`):
@@ -60,6 +61,10 @@ no stack trace, no SQL.
   backend, so a sleeping Render instance makes the first visitor wait.
 - **`ProductGrid({ products })`** lays out the cards; **`ProductCard({ product })`** shows the
   photo, name, amount with unit, and price. Neither fetches.
+- **An empty list:** given `[]`, `ProductGrid` shows "Henüz ürün yok" and below it "Yeni hasat
+  ürünleri yakında burada olacak." in place of the list. The page heading "Ürünlerimiz" stays.
+  The message lives in `ProductGrid`, not in the page, because the grid is what knows the list
+  is empty and it can be tested with props alone; the page stays a fetch and a hand-over.
 - **Display formats:**
   - amount in Turkish format without trailing zeros, joined to the unit with a space: `1 L`,
     `0,5 L`, `500 g`
@@ -146,6 +151,8 @@ Backend:
 Frontend:
 - **Given** a list of products as props **When** `ProductGrid` renders **Then** each card shows
   the name, `1 L`, `450,00 TL`, and an image whose `alt` is the name.
+- **Given** an empty list **When** `ProductGrid` renders **Then** it shows "Henüz ürün yok" and
+  "Yeni hasat ürünleri yakında burada olacak." and no list item.
 - **Given** the amounts `1`, `0.5` and `500` **When** they are formatted with their units
   **Then** the results are `1 L`, `0,5 L` and `500 g`.
 - **Given** the price `"1950.00"` **When** it is formatted **Then** the result is `1.950,00 TL`.
@@ -164,7 +171,7 @@ Live:
 
 ## Out of scope
 
-The product detail page (ZEY-13), "Henüz ürün yok" (ZEY-14), the visitor-facing error message
+The product detail page (ZEY-13), the visitor-facing error message
 (ZEY-15), the "Sepete ekle" button and the header cart count (ZEY-17), stock and "Tükendi"
 (ZEY-19), the new home page and header (ZEY-34), Docker locally (ZEY-37), adding or editing
 products from the interface, price per litre or kilo.
