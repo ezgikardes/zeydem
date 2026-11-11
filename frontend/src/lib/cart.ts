@@ -5,6 +5,9 @@ export type CartLine = Product & {
   quantity: number;
 };
 
+// The most of one product a cart can hold.
+export const MAX_QUANTITY = 10;
+
 export type CartAction = { type: "add"; product: Product; quantity: number };
 
 export function cartCount(lines: CartLine[]): number {
@@ -21,7 +24,7 @@ export function cartReducer(lines: CartLine[], action: CartAction): CartLine[] {
 
   return lines.map((line) =>
     line.id === product.id
-      ? { ...line, quantity: line.quantity + quantity }
+      ? { ...line, quantity: Math.min(line.quantity + quantity, MAX_QUANTITY) }
       : line,
   );
 }
