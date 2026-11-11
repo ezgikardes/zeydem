@@ -15,15 +15,21 @@ The Next.js site. Repo-wide rules are in `../CLAUDE.md`.
   `.design-system` class, not on `:root`, so the home page keeps its own `--brand` until ZEY-34.
   Components use `var(--…)` and never write a colour value; their styles are CSS Modules.
 - **Tests sit next to the code** they test (`format.ts` / `format.test.ts`).
+- **The cart lives in the browser.** `CartProvider` in the root layout holds it; components read
+  it with `useCart()`, which throws outside a provider. The rules are in `src/lib/cart.ts` and
+  `docs/features/cart/spec.md`.
 
 ## Shape
 
 ```
-app/                Next.js entry: layout.tsx (HTML shell) and page.tsx (the home page)
-app/urunler/        the product list: page.tsx fetches, layout.tsx sets the design system and fonts
+app/                Next.js entry: layout.tsx (HTML shell, holds the CartProvider) and page.tsx
+                    (the home page)
+app/urunler/        the product list: page.tsx fetches, layout.tsx sets the design system, the fonts
+                    and the header (SiteHeader)
 app/urunler/[slug]/ one product's page: page.tsx fetches the product named in the address
 src/components/     presentational React components
-src/lib/            plain functions and types shared by components (formatting, Product); no React
+src/lib/            plain functions and types shared by components (formatting, Product, the cart
+                    reducer in cart.ts); no React
 src/styles/         tokens.css, the colours of docs/features/design/design-system.md
 public/products/    product photos; the database stores only their paths
 tests/              Jest setup and mocks for styles and images

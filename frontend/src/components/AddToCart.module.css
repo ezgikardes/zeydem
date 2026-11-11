@@ -1,0 +1,24 @@
+/* The picker and the button on one line, their bottoms aligned under the label Adet. */
+.row {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+/* Primary button: --bg on --brand, contrast 10.4 (design system). */
+.button {
+  height: 46px;
+  padding: 0 28px;
+  border: 0;
+  border-radius: 6px;
+  background: var(--brand);
+  color: var(--bg);
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.button:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 3px;
+}

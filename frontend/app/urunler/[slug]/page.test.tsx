@@ -1,5 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import ProductPage from "./page";
+import CartProvider from "../../../src/components/CartProvider";
 
 // No backend in tests: fetch is replaced by a fake
 const fetchMock = jest.fn();
@@ -30,7 +31,8 @@ describe("/urunler/[slug]", () => {
       }),
     });
 
-    render(await ProductPage({ params }));
+    // The page now holds "Sepete ekle", which reads the cart of the root layout.
+    render(await ProductPage({ params }), { wrapper: CartProvider });
 
     expect(fetchMock).toHaveBeenCalledWith("http://backend.test/products/cig-badem-500g", {
       signal: expect.any(AbortSignal),
