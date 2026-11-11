@@ -10,7 +10,7 @@ type CartContextValue = {
   add: (product: Product, quantity: number) => void;
 };
 
-// null until a CartProvider gives it a value: a missing provider is then easy to tell apart.
+// null until a CartProvider gives it a value
 const CartContext = createContext<CartContextValue | null>(null);
 
 export default function CartProvider({ children }: { children: ReactNode }) {
@@ -19,8 +19,10 @@ export default function CartProvider({ children }: { children: ReactNode }) {
   const add = (product: Product, quantity: number) =>
     dispatch({ type: "add", product, quantity });
 
+  const count = cartCount(lines);
+
   return (
-    <CartContext.Provider value={{ lines, count: cartCount(lines), add }}>
+    <CartContext.Provider value={{ lines, count, add }}>
       {children}
     </CartContext.Provider>
   );
