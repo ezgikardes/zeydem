@@ -7,6 +7,10 @@ export type CartLine = Product & {
 
 export type CartAction = { type: "add"; product: Product; quantity: number };
 
+export function cartCount(lines: CartLine[]): number {
+  return lines.reduce((sum, line) => sum + line.quantity, 0);
+}
+
 export function cartReducer(lines: CartLine[], action: CartAction): CartLine[] {
   const { product, quantity } = action;
   const inCart = lines.some((line) => line.id === product.id);
