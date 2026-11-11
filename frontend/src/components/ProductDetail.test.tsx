@@ -1,4 +1,5 @@
 import { render, screen, within } from "@testing-library/react";
+import CartProvider from "./CartProvider";
 import ProductDetail from "./ProductDetail";
 import type { ProductDetail as Product } from "../lib/product";
 
@@ -15,9 +16,10 @@ const product: Product = {
     "Manisa'daki bahçemizin zeytinlerinden sıkılan natürel sızma zeytinyağı.",
 };
 
+// "Sepete ekle" reads the cart, so the page is drawn inside a CartProvider
 describe("ProductDetail", () => {
   it("shows the name, photo, amount, price and description", () => {
-    render(<ProductDetail product={product} />);
+    render(<ProductDetail product={product} />, { wrapper: CartProvider });
 
     expect(
       screen.getByRole("heading", {
@@ -36,7 +38,7 @@ describe("ProductDetail", () => {
   });
 
   it("shows the breadcrumb with a link back to the list", () => {
-    render(<ProductDetail product={product} />);
+    render(<ProductDetail product={product} />, { wrapper: CartProvider });
 
     // within() keeps the search inside the breadcrumb
     const breadcrumb = within(
@@ -48,6 +50,15 @@ describe("ProductDetail", () => {
     );
     expect(
       breadcrumb.getByText("Natürel Sızma Zeytinyağı 1 L"),
+    ).toBeInTheDocument();
+  });
+
+  it("offers the quantity picker and Sepete ekle", () => {
+    render(<ProductDetail product={product} />, { wrapper: CartProvider });
+
+    expect(screen.getByRole("group", { name: "Adet" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Sepete ekle" }),
     ).toBeInTheDocument();
   });
 });
