@@ -60,7 +60,7 @@ Each comes with the first ticket that needs it.
 | Component | First ticket |
 |---|---|
 | `Button`, `ProductCard`, `ProductGrid` | ZEY-12 |
-| `Header` with cart count, `Footer` with contact details | ZEY-17, ZEY-35, ZEY-36 |
+| `Header` with cart count (named `SiteHeader` until ZEY-34 replaces the home page's own `Header.jsx`), `Footer` with contact details | ZEY-17, ZEY-35, ZEY-36 |
 | `QuantityInput` | ZEY-17 |
 | `Input` with its error message | ZEY-23, ZEY-24 |
 | `Logo` (the current logo, moved into a component) | ZEY-34 |

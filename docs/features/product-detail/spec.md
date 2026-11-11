@@ -73,6 +73,7 @@ message, no stack trace, no SQL).
   - the name as the page's only `h1`
   - the amount with unit and the price, in the same formats as the card (`1 L`, `450,00 TL`)
   - a heading "Açıklama" and the description, with its line breaks kept
+  - since ZEY-17, the "Adet" picker and "Sepete ekle" (`AddToCart`, see the cart spec)
   It does not fetch.
 - **`ProductCard`** becomes a link to `/urunler/{slug}`. The whole card is the link, so the photo
   and the name both open the page. Links use Next.js's `Link`, which opens the page without a
