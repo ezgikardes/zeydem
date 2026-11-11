@@ -69,6 +69,19 @@ describe("cartReducer: add", () => {
     expect(lines[0].quantity).toBe(10);
   });
 
+  it("keeps only the line's own fields when the product carries more", () => {
+    // The product page sends the product with its description.
+    const withDescription = { ...oil, description: "Uzun bir açıklama." };
+
+    const lines = cartReducer([], {
+      type: "add",
+      product: withDescription,
+      quantity: 1,
+    });
+
+    expect(lines).toEqual([{ ...oil, quantity: 1 }]);
+  });
+
   // React compares the old and new cart to decide whether to redraw
   it("does not change the list it is given", () => {
     const start: CartLine[] = [{ ...oil, quantity: 2 }];
