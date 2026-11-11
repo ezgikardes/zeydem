@@ -106,6 +106,7 @@ this one is `SiteHeader` until ZEY-34 moves the home page onto the design system
 ## Invariants
 
 - At most one line per `id`.
+- A line holds exactly the fields of the table, whatever else the product carries.
 - Every line's quantity is a whole number from 1 to 10.
 - The cart never talks to the backend in this ticket, and nothing in it is sent anywhere.
 - Components do not fetch; the product reaches `AddToCart` as a prop (frontend rules).
@@ -130,6 +131,8 @@ Reducer:
 - **Given** a cart with 2 of product 1 **When** 1 of product 3 is added **Then** there are two
   lines and `cartCount` is 3.
 - **Given** a cart with 8 of product 1 **When** 5 more are added **Then** the quantity is 10.
+- **Given** an empty cart **When** a product with its description is added (as the product page
+  sends it) **Then** the line has only the fields of the table above, no `description`.
 - **Given** a cart **When** something is added **Then** the list passed in has not changed.
 
 `QuantityInput`:
