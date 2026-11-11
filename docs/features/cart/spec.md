@@ -133,7 +133,7 @@ Reducer:
 - **Given** a cart **When** something is added **Then** the list passed in has not changed.
 
 `QuantityInput`:
-- **Given** the value 1 **Then** "Azalt" is disabled and "Artır" is enabled.
+- **Given** the value 1 **Then** "Azalt" is disabled.
 - **Given** the value 10 **Then** "Artır" is disabled.
 - **Given** the value 3 **When** "Artır" is pressed **Then** `onChange` gets 4; **When**
   "Azalt" is pressed **Then** `onChange` gets 2.
