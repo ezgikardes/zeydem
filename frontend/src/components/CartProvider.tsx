@@ -10,11 +10,8 @@ type CartContextValue = {
   add: (product: Product, quantity: number) => void;
 };
 
-const CartContext = createContext<CartContextValue>({
-  lines: [],
-  count: 0,
-  add: () => {},
-});
+// null until a CartProvider gives it a value: a missing provider is then easy to tell apart.
+const CartContext = createContext<CartContextValue | null>(null);
 
 export default function CartProvider({ children }: { children: ReactNode }) {
   const [lines, dispatch] = useReducer(cartReducer, []);
@@ -30,5 +27,9 @@ export default function CartProvider({ children }: { children: ReactNode }) {
 }
 
 export function useCart(): CartContextValue {
-  return useContext(CartContext);
+  const cart = useContext(CartContext);
+  if (cart === null) {
+    throw new Error("useCart must be used inside a CartProvider");
+  }
+  return cart;
 }
