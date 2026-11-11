@@ -19,7 +19,18 @@ export function cartReducer(lines: CartLine[], action: CartAction): CartLine[] {
   const inCart = lines.some((line) => line.id === product.id);
 
   if (!inCart) {
-    return [...lines, { ...product, quantity }];
+    // Field by field, not ...product
+    const line: CartLine = {
+      id: product.id,
+      slug: product.slug,
+      name: product.name,
+      photoUrl: product.photoUrl,
+      price: product.price,
+      amount: product.amount,
+      unit: product.unit,
+      quantity: quantity,
+    };
+    return [...lines, line];
   }
 
   return lines.map((line) =>
