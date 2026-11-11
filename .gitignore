@@ -31,3 +31,5 @@ next-env.d.ts
 
 # Turkish copies of the docs, kept local
 *.tr.md
+.vercel
+.env*
