@@ -1,7 +1,15 @@
 "use client";
 
-import { createContext, useContext, useReducer, type ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useReducer,
+  useState,
+  type ReactNode,
+} from "react";
 import { cartCount, cartReducer, type CartLine } from "../lib/cart";
+import { loadCart, saveCart } from "../lib/cartStorage";
 import type { Product } from "../lib/product";
 
 type CartContextValue = {
@@ -15,6 +23,18 @@ const CartContext = createContext<CartContextValue | null>(null);
 
 export default function CartProvider({ children }: { children: ReactNode }) {
   const [lines, dispatch] = useReducer(cartReducer, []);
+  const [loaded, setLoaded] = useState(false);
+
+  // Read after the first render
+  useEffect(() => {
+    dispatch({ type: "load", lines: loadCart() });
+    setLoaded(true);
+  }, []);
+
+  // Write on every change, but never before the read
+  useEffect(() => {
+    if (loaded) saveCart(lines);
+  }, [lines, loaded]);
 
   const add = (product: Product, quantity: number) =>
     dispatch({ type: "add", product, quantity });

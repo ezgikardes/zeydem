@@ -91,3 +91,17 @@ describe("cartReducer: add", () => {
     expect(start).toEqual([{ ...oil, quantity: 2 }]);
   });
 });
+
+describe("cartReducer: load", () => {
+  it("replaces the cart with the given lines", () => {
+    const before: CartLine[] = [{ ...oil, quantity: 2 }];
+    const saved: CartLine[] = [
+      { ...almonds, quantity: 1 },
+      { ...oil, quantity: 5 },
+    ];
+
+    const lines = cartReducer(before, { type: "load", lines: saved });
+
+    expect(lines).toEqual(saved);
+  });
+});
