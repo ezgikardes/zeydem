@@ -1,0 +1,90 @@
+# Continuous integration: checks every change before it reaches main (decision 006).
+# Deployment is not here: Vercel and Render deploy main on their own.
+name: CI
+
+# Run on every push to main and on every pull request into main.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# The jobs only read the code; they get no permission to write to the repo.
+permissions:
+  contents: read
+
+jobs:
+  # The two jobs share nothing, so GitHub runs them in parallel on separate machines.
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      # Download the repo onto the runner.
+      - uses: actions/checkout@v4
+
+      # Install the Node version written in package.json (engines), the one Vercel builds with,
+      # and cache the npm downloads between runs, keyed on the lock file.
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: frontend/package.json
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      # Install exactly the versions in package-lock.json; fails if the lock file is out of date.
+      - run: npm ci
+
+      # Check the code style and common mistakes with ESLint.
+      - run: npm run lint
+
+      # Check the TypeScript types without producing any output files.
+      - run: npx tsc --noEmit
+
+      # Run the Jest tests.
+      - run: npm test
+
+  backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+
+    # The Spring tests need a real PostgreSQL (application-test.yaml). This one lives only as long
+    # as the job, so its password is a throwaway value, not a secret.
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_USER: zeydem
+          POSTGRES_PASSWORD: zeydem_ci
+          POSTGRES_DB: zeydem_test
+        ports:
+          - 5432:5432
+        # Wait until the database accepts connections before the steps start.
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    # application.yaml reads the database password from DB_PASSWORD; it has no default.
+    env:
+      DB_PASSWORD: zeydem_ci
+
+    steps:
+      # Download the repo onto the runner.
+      - uses: actions/checkout@v4
+
+      # Install Java 17 (Temurin, as in the Dockerfile) and cache the Maven downloads,
+      # keyed on pom.xml.
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+          cache-dependency-path: backend/pom.xml
+
+      # Compile and run every test: unit tests, ArchUnit layer rules, Spring tests against
+      # PostgreSQL. -B (batch mode) keeps the log plain, without progress bars.
+      - run: mvn -B verify
