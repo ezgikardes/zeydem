@@ -167,3 +167,139 @@ Keeping the cart after a reload (ZEY-18), stock and "Tükendi" (ZEY-19), the car
 "Sepet (n)" as a link (ZEY-20), changing quantities and removing lines in the cart (ZEY-21,
 ZEY-22), a message when the limit of 10 is reached, a confirmation after adding, the
 Hakkımızda/İletişim links and the header on the whole site (ZEY-34), adding from a list card.
+
+# ZEY-18: A visitor's cart is not lost when the page reloads
+
+Issue: #30 · Jira: ZEY-18
+
+The cart is saved in the browser's `localStorage` every time it changes and read back when the
+site opens. A reload, a new tab or closing and reopening the browser keeps the cart. Nothing
+leaves the browser.
+
+## Interface
+
+### The record
+
+- **Key:** `zeydem-cart-v1`. The `v1` is there so that a later change to the line's shape can
+  use a new key and leave old records alone, instead of misreading them.
+- **Value:** the cart lines as a JSON array, each line with exactly the fields of the ZEY-17
+  table, in the cart's order. An empty cart is saved as `[]`.
+
+```json
+[{"id":1,"slug":"naturel-sizma-zeytinyagi-1l","name":"Natürel Sızma Zeytinyağı",
+  "photoUrl":"/products/zeytinyagi-1l.png","amount":1,"unit":"L","price":"450.00","quantity":2}]
+```
+
+### `loadCart()` and `saveCart(lines)`
+
+In `src/lib/cartStorage.ts`, with `CART_KEY`. Plain functions, no React.
+
+- `loadCart(): CartLine[]` reads the record and returns its lines. It returns `[]` when there is
+  no record, when the value is not valid JSON, when it is not an array, or when **any** line
+  breaks the rules below. One broken line empties the whole cart: keeping half a cart would
+  look like a bug to the visitor, an empty one looks like a fresh start.
+- A line is valid when `id` and `amount` are numbers, `slug`, `name`, `photoUrl`, `unit` and
+  `price` are strings, `quantity` is a whole number from 1 to 10, and no other line has the same
+  `id`. Fields beyond the table are dropped, so a read line has exactly the table's fields.
+- `saveCart(lines)` writes the lines under `CART_KEY`.
+- Neither throws. If `localStorage` cannot be reached or refuses (private window, site data
+  blocked, storage full), `loadCart()` returns `[]` and `saveCart()` does nothing.
+
+### The reducer
+
+One new action:
+
+```ts
+{ type: "load", lines: CartLine[] }
+```
+
+It replaces the cart with the given lines. It is how the provider puts the saved cart in place.
+
+### `CartProvider`
+
+- **Reading:** after the first render, in an effect, the provider calls `loadCart()` and
+  dispatches `load`. Not earlier: the page is first rendered on the server, which has no
+  `localStorage`, and the browser's first render must match it. So the header shows
+  "Sepet (0)" for a moment, then the saved count. This is accepted.
+- **Writing:** every time the lines change, the provider calls `saveCart(lines)`, but only after
+  the read. Writing before it would save the empty starting cart over the saved one.
+- Right after the read the cart is written once, so a broken record is replaced by `[]` at once.
+
+## Preconditions and postconditions
+
+**Before:**
+- The provider from ZEY-17 is in the root layout.
+
+**After any change to the cart (once the saved cart has been read):**
+- `zeydem-cart-v1` holds the same lines as the cart, if `localStorage` can be used.
+
+**After the site opens:**
+- The cart holds the saved lines if the record is valid, otherwise it is empty and the record
+  says `[]`.
+
+## Invariants
+
+- Everything in ZEY-17 still holds, also for a cart read from storage: one line per `id`, the
+  table's fields only, quantities from 1 to 10.
+- The record is never written before it has been read.
+- A problem with `localStorage` never shows up as an error on the page.
+
+## Failure modes
+
+- **No record** (first visit): the cart starts empty.
+- **A broken record** (not JSON, not an array, a line that breaks the rules): the cart starts
+  empty and the record is overwritten with `[]`.
+- **`localStorage` cannot be used:** the cart works in memory, as in ZEY-17; a reload empties it.
+- **Storage full:** the write is skipped; the cart in memory is right, the saved one is older.
+
+## Known limits
+
+- **Two tabs:** each tab reads the record once, when it opens. With two tabs open, what one tab
+  adds is overwritten by the other tab's next change. Live sync between tabs is out of scope.
+- **Old prices:** the saved line keeps the price it was added with. It is for display only; the
+  server calculates the order price (ZEY-25).
+- **No expiry:** a saved cart stays until the visitor changes it or clears the site's data.
+- **The first moment:** the header shows "Sepet (0)" until the read, as said above.
+
+## Checks
+
+`loadCart()` and `saveCart()`:
+- **Given** no record **Then** `loadCart()` returns `[]`.
+- **Given** a cart saved with `saveCart()` **Then** `loadCart()` returns the same lines.
+- **Given** a record that is not valid JSON **Then** `loadCart()` returns `[]`.
+- **Given** a record that is JSON but not an array **Then** `loadCart()` returns `[]`.
+- **Given** a record with one valid line and one line whose quantity is 11 **Then** `loadCart()`
+  returns `[]`. The same for a quantity of 0, a missing field, a price that is a number and two
+  lines with the same `id`.
+- **Given** a valid line with an extra field **Then** the line read back has no extra field.
+- **Given** `localStorage` throws **Then** `loadCart()` returns `[]` and `saveCart()` does not
+  throw.
+
+Reducer:
+- **Given** a cart with one line **When** `load` with two other lines **Then** the cart is those
+  two lines.
+
+`CartProvider` (with `SiteHeader` and `AddToCart`, as in ZEY-17):
+- **Given** a saved record with 2 of a product **When** the provider opens **Then** the header
+  shows "Sepet (2)".
+- **Given** an empty `localStorage` **When** 2 are added **Then** the record holds that one line
+  with quantity 2.
+- **Given** a broken record **When** the provider opens **Then** the header shows "Sepet (0)" and
+  the record is `[]`.
+
+Live:
+- **Given** the deployed site **When** I add 2 products and reload **Then** the header shows
+  "Sepet (2)"; the same after closing the browser and opening the site again.
+- **Given** the deployed site **When** I break `zeydem-cart-v1` in the developer tools and
+  reload **Then** the page shows no error and "Sepet (0)".
+
+## Must still work
+
+- The ZEY-17 checks. Their tests clear `localStorage` before each test, so one test's cart does
+  not leak into the next.
+- `npm test`, `npm run lint` and `npm run build` in `frontend/`.
+
+## Out of scope
+
+Live sync between tabs, saving the cart to an account or the server, updating saved prices
+(ZEY-25), a cart that expires, a message when a broken record is thrown away.
