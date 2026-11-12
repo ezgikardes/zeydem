@@ -1,5 +1,7 @@
 # Zeydem
 
+[![CI](https://github.com/ezgikardes/zeydem/actions/workflows/ci.yml/badge.svg)](https://github.com/ezgikardes/zeydem/actions/workflows/ci.yml)
+
 Online shop for a family farm in Manisa, Türkiye. The farm produces olive oil and almonds;
 walnuts are coming.
 
@@ -35,6 +37,16 @@ npm run lint    # check the code with ESLint
 npm run build   # production build
 npm start       # serve the production build
 ```
+
+## CI
+
+GitHub Actions runs `.github/workflows/ci.yml` on every push to `main` and every pull request into
+it (decision 006). Two jobs run in parallel:
+
+- **frontend:** `npm ci`, `npm run lint`, `tsc --noEmit`, `npm test`
+- **backend:** `mvn -B verify` against a throwaway PostgreSQL started by the workflow
+
+Merging into `main` waits for both. Deployment stays with Vercel and Render.
 
 ## Repo
 
