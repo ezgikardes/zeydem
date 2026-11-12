@@ -17,7 +17,9 @@ The Next.js site. Repo-wide rules are in `../CLAUDE.md`.
 - **Tests sit next to the code** they test (`format.ts` / `format.test.ts`).
 - **The cart lives in the browser.** `CartProvider` in the root layout holds it; components read
   it with `useCart()`, which throws outside a provider. The rules are in `src/lib/cart.ts` and
-  `docs/features/cart/spec.md`.
+  `docs/features/cart/spec.md`. The provider keeps the cart in `localStorage` under
+  `zeydem-cart-v1` (`src/lib/cartStorage.ts`): it reads after the first render and never writes
+  before that read. Tests that render it clear `localStorage` first.
 
 ## Shape
 
