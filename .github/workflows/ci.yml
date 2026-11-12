@@ -22,11 +22,11 @@ jobs:
         working-directory: frontend
     steps:
       # Download the repo onto the runner.
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       # Install the Node version written in package.json (engines), the one Vercel builds with,
       # and cache the npm downloads between runs, keyed on the lock file.
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version-file: frontend/package.json
           cache: npm
@@ -74,11 +74,11 @@ jobs:
 
     steps:
       # Download the repo onto the runner.
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       # Install Java 17 (Temurin, as in the Dockerfile) and cache the Maven downloads,
       # keyed on pom.xml.
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v6
         with:
           distribution: temurin
           java-version: '17'
