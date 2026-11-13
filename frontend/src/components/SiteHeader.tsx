@@ -16,8 +16,9 @@ export default function SiteHeader() {
         <Link className={styles.link} href="/urunler">
           Ürünler
         </Link>
-        {/* Text until the cart page exists (ZEY-20). */}
-        <span className={styles.cart}>{`Sepet (${count})`}</span>
+        <Link className={styles.cart} href="/sepet">
+          {`Sepet (${count})`}
+        </Link>
       </nav>
     </header>
   );
