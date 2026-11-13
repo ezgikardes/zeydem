@@ -1,5 +1,5 @@
 import { render, screen, within } from "@testing-library/react";
-import CartPage from "./CartPage";
+import CartContents from "./CartContents";
 import CartProvider from "./CartProvider";
 import type { CartLine } from "../lib/cart";
 import { CART_KEY } from "../lib/cartStorage";
@@ -39,11 +39,11 @@ const threeLines: CartLine[] = [
 ];
 
 // Saves the cart a visitor added, then opens the page
-function renderCartPage(lines: CartLine[]) {
+function renderCartContents(lines: CartLine[]) {
   localStorage.setItem(CART_KEY, JSON.stringify(lines));
   render(
     <CartProvider>
-      <CartPage />
+      <CartContents />
     </CartProvider>,
   );
 }
@@ -52,9 +52,9 @@ beforeEach(() => {
   localStorage.clear();
 });
 
-describe("the cart page", () => {
+describe("the cart contents", () => {
   it("shows one row per line and the total", () => {
-    renderCartPage(threeLines);
+    renderCartContents(threeLines);
 
     expect(
       screen.getByRole("heading", { name: "Sepetim" }),
@@ -66,7 +66,7 @@ describe("the cart page", () => {
   });
 
   it("shows the amount, unit price, quantity and line total in a row", () => {
-    renderCartPage(threeLines);
+    renderCartContents(threeLines);
 
     const almonds = within(screen.getByRole("row", { name: /Çiğ Badem/ }));
     expect(almonds.getByText("500 g")).toBeInTheDocument();
@@ -76,7 +76,7 @@ describe("the cart page", () => {
   });
 
   it("links the name to the product page and names the photo", () => {
-    renderCartPage(threeLines);
+    renderCartContents(threeLines);
 
     expect(screen.getByRole("link", { name: "Çiğ Badem" })).toHaveAttribute(
       "href",
@@ -86,7 +86,7 @@ describe("the cart page", () => {
   });
 
   it("shows only the heading when the cart is empty", () => {
-    renderCartPage([]);
+    renderCartContents([]);
 
     expect(
       screen.getByRole("heading", { name: "Sepetim" }),
