@@ -15,6 +15,8 @@ import type { Product } from "../lib/product";
 type CartContextValue = {
   lines: CartLine[];
   count: number;
+  // false until the saved cart has been read, so a page can tell "not read yet" from "empty"
+  loaded: boolean;
   add: (product: Product, quantity: number) => void;
 };
 
@@ -42,7 +44,7 @@ export default function CartProvider({ children }: { children: ReactNode }) {
   const count = cartCount(lines);
 
   return (
-    <CartContext.Provider value={{ lines, count, add }}>
+    <CartContext.Provider value={{ lines, count, loaded, add }}>
       {children}
     </CartContext.Provider>
   );
