@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import ProductPage from "./page";
-import CartProvider from "../../../src/components/CartProvider";
+import CartProvider from "../../../../src/components/CartProvider";
 
 // No backend in tests: fetch is replaced by a fake
 const fetchMock = jest.fn();

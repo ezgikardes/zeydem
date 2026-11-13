@@ -1,3 +1,4 @@
+import { toKurus } from "./money";
 import type { Product } from "./product";
 
 // One product in the cart: the product's fields plus how many of it.
@@ -15,6 +16,14 @@ export type CartAction =
 
 export function cartCount(lines: CartLine[]): number {
   return lines.reduce((sum, line) => sum + line.quantity, 0);
+}
+
+export function lineTotal(line: CartLine): number {
+  return toKurus(line.price) * line.quantity;
+}
+
+export function cartTotal(lines: CartLine[]): number {
+  return lines.reduce((sum, line) => sum + lineTotal(line), 0);
 }
 
 export function cartReducer(lines: CartLine[], action: CartAction): CartLine[] {

@@ -44,6 +44,15 @@ describe("the cart on a product page", () => {
     );
   });
 
+  it("links Sepet (n) to the cart page", () => {
+    renderProductPage();
+
+    expect(screen.getByRole("link", { name: "Sepet (0)" })).toHaveAttribute(
+      "href",
+      "/sepet",
+    );
+  });
+
   it("counts what Sepete ekle adds", () => {
     renderProductPage();
 
@@ -57,7 +66,7 @@ describe("the cart on a product page", () => {
   });
 
   it("fails at once when there is no CartProvider", () => {
-    // React prints the thrown error to the console; hide it so the test output stays readable.
+    // Hide React's error log so the test output stays readable.
     jest.spyOn(console, "error").mockImplementation(() => {});
 
     expect(() => render(<SiteHeader />)).toThrow();

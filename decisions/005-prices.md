@@ -28,6 +28,8 @@ total must never be off by a kuruş. The earlier frontend kept prices as whole k
 - The frontend only formats a price; it does not calculate with it. When the cart total arrives
   (ZEY-20), how it is added up is decided there, on purpose.
 - The total that is charged is computed by the backend with `BigDecimal` (ZEY-25).
+- **Decided in ZEY-20:** the cart page adds up in whole kuruş (`src/lib/money.ts`): the price
+  text is split at the dot and read as two whole numbers, never as a decimal number.
 
 **Why this option:**
 - The value means the same thing at every step; `450.00` in the database is `"450.00"` in the

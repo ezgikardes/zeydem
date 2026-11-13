@@ -73,11 +73,18 @@ describe("loadCart and saveCart", () => {
     ["a quantity that is not whole", { ...almondLine, quantity: 1.5 }],
     ["a missing name", { ...almondLine, name: undefined }],
     ["a price that is a number", { ...almondLine, price: 320 }],
+    ["a price that is not a price", { ...almondLine, price: "abc" }],
     ["the same id as the other line", { ...almondLine, id: oilLine.id }],
   ])("returns an empty cart when one line has %s", (_, brokenLine) => {
     store([oilLine, brokenLine]);
 
     expect(loadCart()).toEqual([]);
+  });
+
+  it("reads a price with no decimals", () => {
+    store([{ ...almondLine, price: "320" }]);
+
+    expect(loadCart()).toEqual([{ ...almondLine, price: "320" }]);
   });
 
   it("drops fields that are not part of a cart line", () => {

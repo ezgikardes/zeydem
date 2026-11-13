@@ -1,4 +1,5 @@
 import { MAX_QUANTITY, type CartLine } from "./cart";
+import { PRICE_PATTERN } from "./money";
 
 export const CART_KEY = "zeydem-cart-v1";
 
@@ -14,6 +15,7 @@ function toCartLine(value: unknown): CartLine | null {
     typeof line.name === "string" &&
     typeof line.photoUrl === "string" &&
     typeof line.price === "string" &&
+    PRICE_PATTERN.test(line.price) &&
     typeof line.amount === "number" &&
     typeof line.unit === "string" &&
     Number.isInteger(line.quantity) &&

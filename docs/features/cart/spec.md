@@ -303,3 +303,176 @@ Live:
 
 Live sync between tabs, saving the cart to an account or the server, updating saved prices
 (ZEY-25), a cart that expires, a message when a broken record is thrown away.
+
+# ZEY-20: A visitor sees the products, quantities and total on the cart page
+
+Issue: #32 · Jira: ZEY-20 · Sketch: `docs/features/design/sketches/04-cart.png`
+
+`/sepet` shows what is in the cart: one row per line and the total at the bottom. "Sepet (n)"
+in the header becomes a link to it. Nothing can be changed on the page yet (ZEY-21, ZEY-22).
+The prices come from the saved cart; the page does not ask the backend.
+
+## Interface
+
+### Route group `(magaza)`
+
+The product pages and the cart page share one header, so both go into a common folder that is
+not part of the URL.
+
+- **Why:** in Next.js a folder is a part of the URL, and a folder's `layout.tsx` wraps every
+  page under it. The header lives in `app/urunler/layout.tsx`, so a page at `app/sepet/` would
+  not get it. Putting the header in the root layout would give the home page two headers;
+  copying the layout would keep the same code in two places.
+- **How:** a folder whose name is in parentheses is a *route group*: Next.js leaves it out of
+  the URL. `magaza` (shop) is only a label for the shopping pages; visitors never see it.
+- **Refactor:** in its own commit, with no change in behaviour.
+
+```
+app/
+├── layout.tsx              wraps every page (CartProvider), unchanged
+├── page.tsx                /  (outside the group, keeps its own header until ZEY-34)
+└── (magaza)/               not in the URL
+    ├── layout.tsx          design system + SiteHeader (was app/urunler/layout.tsx)
+    ├── urunler/            /urunler, /urunler/<slug>  (same URLs)
+    └── sepet/page.tsx      /sepet  (new)
+```
+
+### Money: `src/lib/money.ts`
+
+A price is text with up to two decimals (decision 005). To add prices up, the page turns them
+into whole kuruş, adds and multiplies whole numbers, and turns the result back into text.
+
+- `PRICE_PATTERN`: digits, optionally a dot and one or two digits. `"450.00"`, `"400.5"` and
+  `"400"` match; `"abc"`, `"4.5.0"`, `"-1"` and `""` do not.
+- `toKurus(price: string): number`: `"450.00"` → `45000`, `"400.5"` → `40050`, `"400"` →
+  `40000`. Built from the digits as text, never with `parseFloat` or `Number(price) * 100`
+  (`Number("4.35") * 100` is `434.99999999999994`). Throws for a price that does not match
+  `PRICE_PATTERN`: a broken price here is a bug, and a loud one is found sooner.
+- `fromKurus(kurus: number): string`: `304000` → `"3040.00"`, the same shape the backend sends,
+  so the result goes through the existing `formatPrice`. One formatter for every price on the
+  site.
+
+Whole numbers are exact in JavaScript up to 2^53 (about 9 × 10^15). The largest line is
+10 × 99.999.999,99 TL (decision 005) = about 10^11 kuruş, far below it.
+
+### Totals: `src/lib/cart.ts`
+
+- `lineTotal(line): number` = `toKurus(line.price) × line.quantity`, in kuruş.
+- `cartTotal(lines): number` = the sum of the line totals, in kuruş; `0` for an empty cart.
+
+### The saved price: `loadCart()`
+
+One rule is added to the ZEY-18 line rules: `price` must match `PRICE_PATTERN`. A line with a
+price like `"abc"` empties the cart, like any other broken line. So every price that reaches
+`toKurus` is valid.
+
+### `CartProvider` and `useCart()`
+
+`useCart()` also returns `loaded`: `false` until the saved cart has been read (ZEY-18), then
+`true`. The page needs it to tell "not read yet" from "empty".
+
+### `CartContents`
+
+`src/components/CartContents.tsx`, `"use client"` (it reads the cart). The page,
+`CartPage` in `app/(magaza)/sepet/page.tsx`, renders it inside a `main`: pages are named `…Page`
+(`ProductsPage`, `ProductPage`), the components inside them after what they show. From the sketch:
+
+- A "Sepetim" heading (`h1`), always.
+- **Before the read** (`loaded` is `false`): only the heading. The server renders this too, so
+  the visitor never sees a wrong cart for a moment.
+- **After the read, empty cart:** only the heading. The "Sepetiniz boş" message is ZEY-22.
+- **After the read, with lines:** a table with the columns "Ürün", "Birim fiyat", "Adet",
+  "Toplam". One row per line, in the cart's order:
+  - **Ürün:** the photo (`alt` = the name), the name as a link to `/urunler/<slug>`, and under
+    it the amount (`formatAmount`, e.g. `1 L`).
+  - **Birim fiyat:** `formatPrice(line.price)`.
+  - **Adet:** the quantity as a number (the "−"/"+" buttons are ZEY-21).
+  - **Toplam:** `formatPrice(fromKurus(lineTotal(line)))`.
+- Under the table, "Toplam" and `formatPrice(fromKurus(cartTotal(lines)))`.
+- A table because the content is a table: rows and columns that belong together. Screen readers
+  read each cell with its column name.
+
+### `SiteHeader`
+
+"Sepet (n)" becomes a `Link` to `/sepet`, same text, same style.
+
+## Preconditions and postconditions
+
+**Before:**
+- The cart provider (ZEY-17) and the saved cart (ZEY-18) work as before.
+
+**After the cart has been read, on `/sepet`:**
+- There is one row per cart line, with that line's values.
+- The total shown is the exact sum of quantity × price over all lines.
+
+## Invariants
+
+- No price is calculated with a floating-point number; `Number()` is still used only inside
+  `formatPrice`, to display.
+- The page never talks to the backend.
+- Nothing about the cart is shown before it has been read.
+
+## Failure modes
+
+- **A broken price in the saved cart:** `loadCart()` empties the cart (rule above); the page
+  shows only the heading.
+- **`toKurus` gets a price that does not match:** it throws. It cannot happen through the site:
+  prices come from the backend or from a checked record.
+- **A photo that does not load:** the browser shows the `alt` text; the row stays.
+- **`localStorage` cannot be used:** the page shows the cart held in memory, as in ZEY-18.
+
+## Known limits
+
+- **Prices from the record:** the page shows the price the line was saved with. If it was edited
+  by hand, the visitor sees that price and a total made from it. The order price is calculated
+  by the server (ZEY-25), so this changes only what is shown in that browser.
+- **The first moment:** until the read, only the heading is shown; the header shows "Sepet (0)"
+  as in ZEY-18.
+
+## Checks
+
+`toKurus()` and `fromKurus()`:
+- **Given** `"450.00"` **Then** `toKurus` returns `45000`; `"400.5"` → `40050`; `"400"` →
+  `40000`; `"4.35"` → `435`.
+- **Given** `"abc"`, `"4.5.0"`, `"-1"` or `""` **Then** `toKurus` throws.
+- **Given** `304000` **Then** `fromKurus` returns `"3040.00"`; `5` → `"0.05"`; `0` → `"0.00"`.
+
+Totals:
+- **Given** `"450.00"` × 1, `"1950.00"` × 1 and `"320.00"` × 2 **Then** `lineTotal` of the
+  almonds is `64000` and `cartTotal` is `304000`, which is shown as `3.040,00 TL`.
+- **Given** an empty cart **Then** `cartTotal` is `0`.
+
+`loadCart()`:
+- **Given** a record with one line whose price is `"abc"` **Then** `loadCart()` returns `[]`.
+- **Given** a record with one line whose price is `"400"` **Then** the line is read.
+
+`CartContents` (inside a `CartProvider`, the cart saved in `localStorage` before rendering):
+- **Given** the three lines above **Then** the table has three rows; the almond row shows
+  "Çiğ Badem", `500 g`, `320,00 TL`, `2` and `640,00 TL`; the page shows "Toplam" and
+  `3.040,00 TL`.
+- **Given** the three lines **Then** "Çiğ Badem" links to `/urunler/<its slug>` and its photo has
+  the alt text "Çiğ Badem".
+- **Given** an empty cart **Then** the page shows "Sepetim" and no table.
+
+`SiteHeader`:
+- **Given** any cart **Then** "Sepet (n)" is a link to `/sepet`.
+
+Live:
+- **Given** the deployed site **When** I add 1 L olive oil, 5 L olive oil and 2 almonds and click
+  "Sepet (4)" **Then** `/sepet` shows three rows and "Toplam 3.040,00 TL", under the same header.
+- **Given** the deployed site **When** I reload `/sepet` **Then** the same rows come back, and
+  no other cart flashes before them.
+
+## Must still work
+
+- `/urunler` and `/urunler/<slug>`: same URLs, same header, same pages. Their tests move with
+  the folder and pass unchanged, apart from import paths.
+- The ZEY-17 and ZEY-18 checks.
+- `npm test`, `npm run lint` and `npm run build` in `frontend/`; the build lists `/sepet`,
+  `/urunler` and `/urunler/[slug]`.
+
+## Out of scope
+
+Changing quantities (ZEY-21), "Çıkar" and the empty cart message (ZEY-22), "Ödemeye geç" and
+payment (F3), shipping cost, discounts, updating saved prices (the server calculates the order
+price, ZEY-25), the site footer, the header on the home page (ZEY-34).

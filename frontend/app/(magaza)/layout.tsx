@@ -13,8 +13,8 @@ const inter = Inter({
   variable: "--font-body",
 });
 
-// Wraps every page under /urunler in the design system.
-export default function ProductsLayout({ children }: { children: ReactNode }) {
+// Gives every shop page (the (magaza) group) the header and the design system.
+export default function ShopLayout({ children }: { children: ReactNode }) {
   return (
     <div className={`design-system ${fraunces.variable} ${inter.variable}`}>
       <SiteHeader />

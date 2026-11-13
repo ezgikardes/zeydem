@@ -1,0 +1,89 @@
+.title {
+  font-size: clamp(32px, 5vw, 48px);
+  font-weight: 600;
+  margin: 0 0 32px;
+}
+
+/* On a narrow phone the table scrolls inside this box, not the whole page. */
+.scroll {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th {
+  text-align: left;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--sage-deep);
+  padding: 0 12px 12px;
+  border-bottom: 1px solid var(--line);
+}
+
+.table td {
+  padding: 16px 12px;
+  border-bottom: 1px solid var(--line);
+  vertical-align: middle;
+}
+
+.product {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.photo {
+  display: block;
+  width: 72px;
+  height: 72px;
+  flex-shrink: 0;
+  object-fit: cover;
+  border-radius: 6px;
+  background: var(--bg-warm);
+}
+
+.name {
+  font-weight: 600;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.name:hover {
+  text-decoration: underline;
+}
+
+.name:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+.amount {
+  margin: 4px 0 0;
+  font-size: 15px;
+  color: var(--sage-deep);
+}
+
+/* A price should not break over two lines. */
+.money {
+  white-space: nowrap;
+}
+
+/* The box under the table, on the right, as in the sketch. */
+.total {
+  display: flex;
+  justify-content: space-between;
+  gap: 32px;
+  width: fit-content;
+  min-width: min(100%, 320px);
+  margin: 32px 0 0 auto;
+  padding: 20px 24px;
+  font-size: 20px;
+  font-weight: 600;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-sizing: border-box;
+}
