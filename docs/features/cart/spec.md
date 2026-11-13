@@ -371,10 +371,11 @@ price like `"abc"` empties the cart, like any other broken line. So every price 
 `useCart()` also returns `loaded`: `false` until the saved cart has been read (ZEY-18), then
 `true`. The page needs it to tell "not read yet" from "empty".
 
-### `CartPage`
+### `CartContents`
 
-`src/components/CartPage.tsx`, `"use client"` (it reads the cart). `app/(magaza)/sepet/page.tsx`
-renders it inside a `main`. From the sketch:
+`src/components/CartContents.tsx`, `"use client"` (it reads the cart). The page,
+`CartPage` in `app/(magaza)/sepet/page.tsx`, renders it inside a `main`: pages are named `…Page`
+(`ProductsPage`, `ProductPage`), the components inside them after what they show. From the sketch:
 
 - A "Sepetim" heading (`h1`), always.
 - **Before the read** (`loaded` is `false`): only the heading. The server renders this too, so
@@ -445,7 +446,7 @@ Totals:
 - **Given** a record with one line whose price is `"abc"` **Then** `loadCart()` returns `[]`.
 - **Given** a record with one line whose price is `"400"` **Then** the line is read.
 
-`CartPage` (inside a `CartProvider`, the cart saved in `localStorage` before rendering):
+`CartContents` (inside a `CartProvider`, the cart saved in `localStorage` before rendering):
 - **Given** the three lines above **Then** the table has three rows; the almond row shows
   "Çiğ Badem", `500 g`, `320,00 TL`, `2` and `640,00 TL`; the page shows "Toplam" and
   `3.040,00 TL`.
