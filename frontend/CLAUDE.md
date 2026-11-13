@@ -20,15 +20,20 @@ The Next.js site. Repo-wide rules are in `../CLAUDE.md`.
   `docs/features/cart/spec.md`. The provider keeps the cart in `localStorage` under
   `zeydem-cart-v1` (`src/lib/cartStorage.ts`): it reads after the first render and never writes
   before that read. Tests that render it clear `localStorage` first.
+- **Money is added up in whole kuruş.** A price stays text (`"450.00"`, decision 005);
+  `src/lib/money.ts` turns it into kuruş to calculate and back into text to show with
+  `formatPrice`. Never `parseFloat` or `Number(price) * 100`.
 
 ## Shape
 
 ```
 app/                Next.js entry: layout.tsx (HTML shell, holds the CartProvider) and page.tsx
                     (the home page)
-app/urunler/        the product list: page.tsx fetches, layout.tsx sets the design system, the fonts
-                    and the header (SiteHeader)
-app/urunler/[slug]/ one product's page: page.tsx fetches the product named in the address
+app/(magaza)/       the shop pages; layout.tsx sets the design system, the fonts and the header
+                    (SiteHeader). The folder name is not part of the URL
+  urunler/          the product list: page.tsx fetches
+  urunler/[slug]/   one product's page: page.tsx fetches the product named in the address
+  sepet/            the cart page: fetches nothing, CartContents reads the cart
 src/components/     presentational React components
 src/lib/            plain functions and types shared by components (formatting, Product, the cart
                     reducer in cart.ts); no React
@@ -60,3 +65,5 @@ build, or its styles break until `.next` is deleted.
 - A folder is a part of the address and `page.tsx` is the page there. A folder in brackets
   (`[slug]`) matches any value; the page reads it from `params`, which Next.js 15 passes as a
   promise to `await`.
+- A folder in parentheses (`(magaza)`) is a route group: the pages inside share its layout, and
+  the name is left out of the URL.
