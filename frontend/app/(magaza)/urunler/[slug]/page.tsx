@@ -1,6 +1,6 @@
-import ProductDetail from "../../../src/components/ProductDetail";
-import type { ProductDetail as Product } from "../../../src/lib/product";
-import { BACKEND_TIMEOUT_MS } from "../../../src/lib/backend";
+import ProductDetail from "../../../../src/components/ProductDetail";
+import type { ProductDetail as Product } from "../../../../src/lib/product";
+import { BACKEND_TIMEOUT_MS } from "../../../../src/lib/backend";
 import styles from "./page.module.css";
 
 // params holds the [slug] part of the address.

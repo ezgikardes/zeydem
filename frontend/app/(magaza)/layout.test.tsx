@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import ProductsLayout from "./layout";
+import ShopLayout from "./layout";
 import CartProvider from "../../src/components/CartProvider";
 
 // next/font downloads fonts while Next.js builds
@@ -8,12 +8,12 @@ jest.mock("next/font/google", () => ({
   Inter: () => ({ variable: "font-body" }),
 }));
 
-describe("/urunler layout", () => {
+describe("shop layout", () => {
   it("puts the header with the cart count above every page", () => {
     render(
-      <ProductsLayout>
+      <ShopLayout>
         <p>Sayfanın içeriği</p>
-      </ProductsLayout>,
+      </ShopLayout>,
       { wrapper: CartProvider },
     );
 

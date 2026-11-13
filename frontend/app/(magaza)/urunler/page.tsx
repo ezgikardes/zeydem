@@ -1,6 +1,6 @@
-import ProductGrid from "../../src/components/ProductGrid";
-import type { Product } from "../../src/lib/product";
-import { BACKEND_TIMEOUT_MS } from "../../src/lib/backend";
+import ProductGrid from "../../../src/components/ProductGrid";
+import type { Product } from "../../../src/lib/product";
+import { BACKEND_TIMEOUT_MS } from "../../../src/lib/backend";
 import styles from "./page.module.css";
 
 // Render on every visit, not once at build time
