@@ -40,7 +40,7 @@ export function cartReducer(lines: CartLine[], action: CartAction): CartLine[] {
   }
 
   if (action.type === "remove") {
-    return lines;
+    return lines.filter((line) => line.id !== action.id);
   }
 
   const { product, quantity } = action;
