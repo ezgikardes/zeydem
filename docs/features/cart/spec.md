@@ -476,3 +476,119 @@ Live:
 Changing quantities (ZEY-21), "Çıkar" and the empty cart message (ZEY-22), "Ödemeye geç" and
 payment (F3), shipping cost, discounts, updating saved prices (the server calculates the order
 price, ZEY-25), the site footer, the header on the home page (ZEY-34).
+
+# ZEY-21: A visitor increases or decreases the quantity of a product in the cart
+
+Issue: #35 · Jira: ZEY-21 · Sketch: `docs/features/design/sketches/04-cart.png`
+
+On `/sepet` each row's quantity becomes the "−"/"+" picker from ZEY-17. A change shows at once
+in the row's total, the cart total and the header, and is saved like any other change to the
+cart (ZEY-18). The limits are the same as on the product page: 1 to 10.
+
+## Interface
+
+### The reducer
+
+One new action:
+
+```ts
+{ type: "setQuantity", id: number, quantity: number }
+```
+
+- The line with that `id` gets the given quantity. The other lines, and the line's other fields,
+  stay as they were.
+- **A quantity that is not a whole number from 1 to 10:** the cart is returned unchanged. The
+  picker cannot send one; the reducer still refuses it, so the cart's rule holds whatever calls it.
+- **An `id` that is not in the cart:** the cart is returned unchanged. It does not add a line;
+  adding is `add`'s job.
+- **It sets the quantity to the given number; it does not add to it.** For example, with 2
+  almonds in the cart, pressing "+" sends "make it 3", not "add 1". The picker already knows the
+  new number, so "+" and "−" use the same action.
+
+### `CartProvider` and `useCart()`
+
+`useCart()` also returns `setQuantity(id, quantity)`, which dispatches the action. Saving needs
+nothing new: the provider already writes the cart after every change.
+
+### `QuantityInput`
+
+The picker gets an optional `label` prop. It sets the text of the heading above the picker
+(the `legend`).
+
+- **On the product page** no `label` is given. Nothing changes: "Adet" is shown above the picker.
+- **On the cart page** each row gets a `label` with the product's name, for example
+  "Çiğ Badem 500 g adedi". It is not shown on screen, because the column heading already says
+  "Adet" and the sketch has no heading in the rows. A screen reader still reads it.
+- **Why it is needed:** every row has an "Azalt" and an "Artır" button. If a screen reader said
+  only "Artır", a blind visitor could not tell which product it increases. Now it says
+  "Çiğ Badem 500 g adedi, Artır".
+- Hidden with the usual CSS for text that only screen readers read (`position: absolute`,
+  1 px size, `clip`), not with `display: none`, which would hide it from screen readers too.
+
+### `CartContents`
+
+- The "Adet" cell shows `QuantityInput` with the line's quantity, and its `onChange` calls
+  `setQuantity(line.id, next)`.
+- Its `label` is the name, the amount and "adedi": `Çiğ Badem 500 g adedi`. The amount is part of
+  it because two products share a name (1 L and 5 L olive oil).
+
+## Preconditions and postconditions
+
+**Before:**
+- The cart has been read (ZEY-18) and the page shows its rows (ZEY-20).
+
+**After pressing "+" or "−" in a row:**
+- That line's quantity is one more or one less, never outside 1–10.
+- The row's total, the cart total and "Sepet (n)" show the new quantity.
+- `zeydem-cart-v1` holds the new quantity, if `localStorage` can be used.
+
+## Invariants
+
+- Everything in ZEY-17 and ZEY-18 still holds: one line per `id`, quantities from 1 to 10.
+- Changing a quantity never adds or removes a line, and never changes the order of the lines.
+- Money is still calculated in kuruş (ZEY-20).
+
+## Failure modes
+
+- **"−" at 1, "+" at 10:** the button is disabled; nothing happens.
+- **A quantity outside 1–10 sent to the reducer:** ignored, the cart stays as it was.
+- **`localStorage` cannot be used:** the change shows on the page; a reload loses it, as in
+  ZEY-18.
+
+## Checks
+
+Reducer (a cart with 1 L olive oil × 1 and almonds × 2):
+- **Given** the cart **When** `setQuantity` sets the almonds to 3 **Then** the almonds' quantity
+  is 3 and the olive oil line is unchanged.
+- **Given** the cart **When** `setQuantity` sets the almonds to 1 **Then** their quantity is 1.
+- **Given** the cart **When** `setQuantity` sends 0, 11 or 2.5 **Then** the cart is unchanged.
+- **Given** the cart **When** `setQuantity` sends an `id` that is not in it **Then** the cart is
+  unchanged.
+
+`QuantityInput`:
+- **Given** no `label` **Then** "Adet" is shown, as before.
+- **Given** the `label` "Çiğ Badem 500 g adedi" **Then** the group is named "Çiğ Badem 500 g adedi".
+
+`CartContents` (with `SiteHeader`, the ZEY-20 cart saved before rendering: 1 L × 1, 5 L × 1,
+almonds × 2):
+- **Given** the cart **When** "Artır" is pressed in the "Çiğ Badem 500 g adedi" group **Then**
+  the almond row shows `3` and `960,00 TL`, the page shows `3.360,00 TL`, the header shows
+  "Sepet (5)" and the record holds the almonds with quantity 3.
+- **Given** the almonds at 2 **When** "Azalt" is pressed **Then** the almond row shows `1` and
+  "Azalt" is disabled in that group.
+- **Given** the almonds at 10 **Then** "Artır" is disabled in that group.
+
+Live:
+- **Given** the deployed site with almonds × 2 in the cart **When** I raise them to 3 on `/sepet`
+  **Then** the row shows `960,00 TL` and the total and header go up; **When** I reload **Then**
+  the quantity is still 3.
+
+## Must still work
+
+- The ZEY-17, ZEY-18 and ZEY-20 checks; the product page still shows a visible "Adet".
+- `npm test`, `npm run lint` and `npm run build` in `frontend/`.
+
+## Out of scope
+
+Removing a line, "Çıkar" and the empty cart message (ZEY-22), typing the quantity with the
+keyboard, limiting the quantity by stock (ZEY-27), a message when a limit is reached.
