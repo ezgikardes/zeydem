@@ -6,14 +6,11 @@ export type CartLine = Product & {
   quantity: number;
 };
 
-// The most of one product a cart can hold.
 export const MAX_QUANTITY = 10;
 
 export type CartAction =
   | { type: "add"; product: Product; quantity: number }
-  // Puts the saved cart in place when the site opens.
   | { type: "load"; lines: CartLine[] }
-  // Sets one line's quantity on the cart page; values outside 1–10 are ignored.
   | { type: "setQuantity"; id: number; quantity: number };
 
 export function cartCount(lines: CartLine[]): number {
@@ -34,14 +31,18 @@ export function cartReducer(lines: CartLine[], action: CartAction): CartLine[] {
   }
 
   if (action.type === "setQuantity") {
-    return lines; // stub: ZEY-21 fills this in
+    const { id, quantity } = action;
+    const allowed =
+      Number.isInteger(quantity) && quantity >= 1 && quantity <= MAX_QUANTITY;
+    if (!allowed) return lines;
+    return lines.map((line) => (line.id === id ? { ...line, quantity } : line));
   }
 
   const { product, quantity } = action;
   const inCart = lines.some((line) => line.id === product.id);
 
   if (!inCart) {
-    // Field by field, not ...product
+    // Field by field, not ...product: it would save the description too
     const line: CartLine = {
       id: product.id,
       slug: product.slug,
