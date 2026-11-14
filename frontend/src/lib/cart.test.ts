@@ -124,6 +124,65 @@ describe("cartReducer: load", () => {
   });
 });
 
+describe("cartReducer: setQuantity", () => {
+  const start: CartLine[] = [
+    { ...oil, quantity: 1 },
+    { ...almonds, quantity: 2 },
+  ];
+
+  it("sets the line's quantity and leaves the other lines alone", () => {
+    const lines = cartReducer(start, {
+      type: "setQuantity",
+      id: almonds.id,
+      quantity: 3,
+    });
+
+    expect(lines).toEqual([
+      { ...oil, quantity: 1 },
+      { ...almonds, quantity: 3 },
+    ]);
+  });
+
+  it("lowers the quantity down to 1", () => {
+    const lines = cartReducer(start, {
+      type: "setQuantity",
+      id: almonds.id,
+      quantity: 1,
+    });
+
+    expect(lines[1].quantity).toBe(1);
+  });
+
+  it.each([0, 11, 2.5])("ignores a quantity of %s", (quantity) => {
+    const lines = cartReducer(start, {
+      type: "setQuantity",
+      id: almonds.id,
+      quantity,
+    });
+
+    expect(lines).toEqual(start);
+  });
+
+  it("ignores an id that is not in the cart", () => {
+    const lines = cartReducer(start, {
+      type: "setQuantity",
+      id: bigOil.id,
+      quantity: 3,
+    });
+
+    expect(lines).toEqual(start);
+  });
+
+  it("does not modify the cart it receives", () => {
+    cartReducer(start, { type: "setQuantity", id: almonds.id, quantity: 3 });
+
+    expect(start).toEqual([
+      { ...oil, quantity: 1 },
+      { ...almonds, quantity: 2 },
+    ]);
+  });
+});
+
 describe("totals", () => {
   const threeLines: CartLine[] = [
     { ...oil, quantity: 1 },

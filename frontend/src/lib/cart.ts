@@ -12,7 +12,9 @@ export const MAX_QUANTITY = 10;
 export type CartAction =
   | { type: "add"; product: Product; quantity: number }
   // Puts the saved cart in place when the site opens.
-  | { type: "load"; lines: CartLine[] };
+  | { type: "load"; lines: CartLine[] }
+  // Sets one line's quantity on the cart page; values outside 1–10 are ignored.
+  | { type: "setQuantity"; id: number; quantity: number };
 
 export function cartCount(lines: CartLine[]): number {
   return lines.reduce((sum, line) => sum + line.quantity, 0);
@@ -29,6 +31,10 @@ export function cartTotal(lines: CartLine[]): number {
 export function cartReducer(lines: CartLine[], action: CartAction): CartLine[] {
   if (action.type === "load") {
     return action.lines;
+  }
+
+  if (action.type === "setQuantity") {
+    return lines; // stub: ZEY-21 fills this in
   }
 
   const { product, quantity } = action;
