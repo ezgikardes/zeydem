@@ -101,7 +101,7 @@ describe("cartReducer: add", () => {
   });
 
   // React compares the old and new cart to decide whether to redraw
-  it("does not change the list it is given", () => {
+  it("does not modify the cart it receives", () => {
     const start: CartLine[] = [{ ...oil, quantity: 2 }];
 
     cartReducer(start, { type: "add", product: oil, quantity: 1 });
