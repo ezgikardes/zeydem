@@ -33,3 +33,6 @@ next-env.d.ts
 *.tr.md
 .vercel
 .env*
+
+# Screenshots and logs of the Playwright browser the assistant uses
+.playwright-mcp/

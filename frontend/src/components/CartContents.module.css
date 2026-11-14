@@ -9,9 +9,18 @@
   overflow-x: auto;
 }
 
+/* Fixed layout: column widths come from here, not from the content, so a longer line total
+   does not shift the columns when a quantity changes. */
 .table {
   width: 100%;
+  min-width: 720px;
+  table-layout: fixed;
   border-collapse: collapse;
+}
+
+/* Wide enough for "19.500,00 TL" (5 L × 10) and the quantity picker; Ürün takes the rest. */
+.fixedCol {
+  width: 160px;
 }
 
 .table th {
