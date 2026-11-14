@@ -524,6 +524,9 @@ The picker gets an optional `label` prop. It sets the text of the heading above 
   "Çiğ Badem 500 g adedi, Artır".
 - Hidden with the usual CSS for text that only screen readers read (`position: absolute`,
   1 px size, `clip`), not with `display: none`, which would hide it from screen readers too.
+- The picker's group is `position: relative`, so the hidden legend stays inside it. Without it,
+  the legend is placed against the page and, on a phone, sticks out of the table's scroll box and
+  makes the whole page scroll sideways.
 
 ### `CartContents`
 
@@ -531,6 +534,12 @@ The picker gets an optional `label` prop. It sets the text of the heading above 
   `setQuantity(line.id, next)`.
 - Its `label` is the name, the amount and "adedi": `Çiğ Badem 500 g adedi`. The amount is part of
   it because two products share a name (1 L and 5 L olive oil).
+- **Fixed column widths:** the table has `table-layout: fixed`; "Birim fiyat", "Adet" and
+  "Toplam" are 160 px each, wide enough for `19.500,00 TL` (5 L × 10) and the picker, and "Ürün"
+  takes the rest. With the default layout the browser sizes the columns from their content, so a
+  line total that becomes the widest one (`1.920,00 TL` → `2.240,00 TL`) moved every column by a
+  few pixels when a quantity changed. The table is at least 720 px wide; on a narrower screen it
+  scrolls inside its box, as in ZEY-20.
 
 ## Preconditions and postconditions
 
@@ -554,6 +563,12 @@ The picker gets an optional `label` prop. It sets the text of the heading above 
 - **A quantity outside 1–10 sent to the reducer:** ignored, the cart stays as it was.
 - **`localStorage` cannot be used:** the change shows on the page; a reload loses it, as in
   ZEY-18.
+
+## Known limits
+
+- **No automatic test for the layout:** Jest does not apply CSS, so it cannot see columns move or
+  the page widen. Both were measured in a browser before and after the fix. A browser test that
+  keeps them fixed is ZEY-39.
 
 ## Checks
 
