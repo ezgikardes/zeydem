@@ -3,6 +3,8 @@
   border: 0;
   margin: 0;
   padding: 0;
+  /* Keeps the hidden legend inside the picker; otherwise it can widen the page. */
+  position: relative;
 }
 
 /* Read by screen readers, not shown. display: none would hide it from them too. */
