@@ -6,13 +6,16 @@ import styles from "./QuantityInput.module.css";
 type Props = {
   value: number;
   onChange: (next: number) => void;
-  label?: string; // stub: ZEY-21 uses it
+  // Screen-reader name for the group
+  label?: string;
 };
 
-export default function QuantityInput({ value, onChange }: Props) {
+export default function QuantityInput({ value, onChange, label }: Props) {
   return (
     <fieldset className={styles.field}>
-      <legend className={styles.label}>Adet</legend>
+      <legend className={label ? styles.hidden : styles.label}>
+        {label ?? "Adet"}
+      </legend>
       <div className={styles.control}>
         <button
           className={styles.step}
