@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { useCart } from "./CartProvider";
+import QuantityInput from "./QuantityInput";
 import { cartTotal, lineTotal } from "../lib/cart";
 import { formatAmount, formatPrice } from "../lib/format";
 import { fromKurus } from "../lib/money";
 import styles from "./CartContents.module.css";
 
 export default function CartContents() {
-  const { lines, loaded } = useCart();
+  const { lines, loaded, setQuantity } = useCart();
 
   return (
     <>
@@ -49,7 +50,13 @@ export default function CartContents() {
                       </div>
                     </td>
                     <td className={styles.money}>{formatPrice(line.price)}</td>
-                    <td>{line.quantity}</td>
+                    <td>
+                      <QuantityInput
+                        value={line.quantity}
+                        onChange={(next) => setQuantity(line.id, next)}
+                        label={`${line.name} ${formatAmount(line.amount, line.unit)} adedi`}
+                      />
+                    </td>
                     <td className={styles.money}>
                       {formatPrice(fromKurus(lineTotal(line)))}
                     </td>
