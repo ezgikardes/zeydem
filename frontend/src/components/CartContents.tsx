@@ -22,9 +22,15 @@ export default function CartContents() {
               <thead>
                 <tr>
                   <th scope="col">Ürün</th>
-                  <th scope="col">Birim fiyat</th>
-                  <th scope="col">Adet</th>
-                  <th scope="col">Toplam</th>
+                  <th className={styles.fixedCol} scope="col">
+                    Birim fiyat
+                  </th>
+                  <th className={styles.fixedCol} scope="col">
+                    Adet
+                  </th>
+                  <th className={styles.fixedCol} scope="col">
+                    Toplam
+                  </th>
                 </tr>
               </thead>
               <tbody>
