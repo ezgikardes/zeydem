@@ -6,6 +6,7 @@ import styles from "./QuantityInput.module.css";
 type Props = {
   value: number;
   onChange: (next: number) => void;
+  label?: string; // stub: ZEY-21 uses it
 };
 
 export default function QuantityInput({ value, onChange }: Props) {

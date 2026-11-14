@@ -41,4 +41,18 @@ describe("QuantityInput", () => {
     fireEvent.click(screen.getByRole("button", { name: "Azalt" }));
     expect(onChange).toHaveBeenLastCalledWith(2);
   });
+
+  it("takes its group name from label when one is given", () => {
+    render(
+      <QuantityInput
+        value={2}
+        onChange={jest.fn()}
+        label="Çiğ Badem 500 g adedi"
+      />,
+    );
+
+    expect(
+      screen.getByRole("group", { name: "Çiğ Badem 500 g adedi" }),
+    ).toHaveTextContent("2");
+  });
 });
