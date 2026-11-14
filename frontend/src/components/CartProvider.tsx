@@ -19,6 +19,7 @@ type CartContextValue = {
   loaded: boolean;
   add: (product: Product, quantity: number) => void;
   setQuantity: (id: number, quantity: number) => void;
+  remove: (id: number) => void;
 };
 
 // null until a CartProvider gives it a value
@@ -45,10 +46,13 @@ export default function CartProvider({ children }: { children: ReactNode }) {
   const setQuantity = (id: number, quantity: number) =>
     dispatch({ type: "setQuantity", id, quantity });
 
+  const remove = (id: number) => dispatch({ type: "remove", id });
+
   const count = cartCount(lines);
 
   return (
-    <CartContext.Provider value={{ lines, count, loaded, add, setQuantity }}>
+    <CartContext.Provider
+      value={{ lines, count, loaded, add, setQuantity, remove }}>
       {children}
     </CartContext.Provider>
   );

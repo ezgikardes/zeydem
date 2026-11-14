@@ -144,3 +144,81 @@ describe("changing a quantity in the cart", () => {
     expect(almondsPicker().getByRole("button", { name: "Artır" })).toBeDisabled();
   });
 });
+
+describe("removing a line from the cart", () => {
+  // With the header, so the count can be checked too
+  function renderCartPage(lines: CartLine[]) {
+    localStorage.setItem(CART_KEY, JSON.stringify(lines));
+    render(
+      <CartProvider>
+        <SiteHeader />
+        <CartContents />
+      </CartProvider>,
+    );
+  }
+
+  const removeButton = (name: string) =>
+    screen.getByRole("button", { name: `Çıkar ${name}` });
+
+  it("names each Çıkar button after its product", () => {
+    renderCartPage(threeLines);
+
+    expect(removeButton("Natürel Sızma Zeytinyağı 1 L")).toBeInTheDocument();
+    expect(removeButton("Natürel Sızma Zeytinyağı 5 L")).toBeInTheDocument();
+    expect(removeButton("Çiğ Badem 500 g")).toHaveTextContent(/^Çıkar/);
+  });
+
+  it("removes the row and updates the total, the header and the saved cart", () => {
+    renderCartPage(threeLines);
+
+    fireEvent.click(removeButton("Çiğ Badem 500 g"));
+
+    // The column names and two lines
+    expect(screen.getAllByRole("row")).toHaveLength(3);
+    expect(screen.queryByRole("row", { name: /Çiğ Badem/ })).not.toBeInTheDocument();
+    expect(screen.getByText("2.400,00 TL")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Sepet (2)" })).toBeInTheDocument();
+
+    const saved: CartLine[] = JSON.parse(localStorage.getItem(CART_KEY)!);
+    expect(saved.map((line) => line.id)).toEqual([1, 2]);
+  });
+
+  it("moves the focus to the next row's Çıkar", () => {
+    renderCartPage(threeLines);
+
+    fireEvent.click(removeButton("Natürel Sızma Zeytinyağı 1 L"));
+
+    expect(removeButton("Natürel Sızma Zeytinyağı 5 L")).toHaveFocus();
+  });
+
+  it("moves the focus to the heading after the last row", () => {
+    renderCartPage(threeLines);
+
+    fireEvent.click(removeButton("Çiğ Badem 500 g"));
+
+    expect(screen.getByRole("heading", { name: "Sepetim" })).toHaveFocus();
+  });
+
+  it("shows the empty cart message when the last line goes", () => {
+    renderCartPage([threeLines[2]]);
+
+    fireEvent.click(removeButton("Çiğ Badem 500 g"));
+
+    expect(screen.getByText("Sepetiniz boş")).toBeInTheDocument();
+    expect(
+      screen.getByRole("link", { name: "Ürünlere göz atın →" }),
+    ).toHaveAttribute("href", "/urunler");
+    expect(screen.queryByRole("table")).not.toBeInTheDocument();
+    expect(screen.queryByText("Toplam")).not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Sepet (0)" })).toBeInTheDocument();
+  });
+
+  it("shows the empty cart message when the page opens with an empty cart", () => {
+    renderCartPage([]);
+
+    expect(screen.getByText("Sepetiniz boş")).toBeInTheDocument();
+    expect(
+      screen.getByRole("link", { name: "Ürünlere göz atın →" }),
+    ).toHaveAttribute("href", "/urunler");
+  });
+});

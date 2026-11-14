@@ -607,3 +607,148 @@ Live:
 
 Removing a line, "Çıkar" and the empty cart message (ZEY-22), typing the quantity with the
 keyboard, limiting the quantity by stock (ZEY-27), a message when a limit is reached.
+
+# ZEY-22: A visitor removes a product from the cart; an empty cart shows "Sepetiniz boş"
+
+Issue: #37 · Jira: ZEY-22 · Sketch: `docs/features/design/sketches/04-cart.png`
+
+Each row on `/sepet` gets a "Çıkar" button. Pressing it removes the line at once, without asking:
+the totals, the header and the saved cart follow, like any other change (ZEY-18). When the cart
+is empty, the page says so and links back to the products.
+
+## Interface
+
+### The reducer
+
+One new action:
+
+```ts
+{ type: "remove", id: number }
+```
+
+- The line with that `id` is left out; the other lines keep their order and their fields.
+- **An `id` that is not in the cart:** the cart is returned unchanged.
+
+### `CartProvider` and `useCart()`
+
+`useCart()` also returns `remove(id)`, which dispatches the action. Saving needs nothing new.
+
+### `CartContents`: the "Çıkar" button
+
+- A fifth column after "Toplam", as in the sketch. Its heading shows nothing; it holds the text
+  "Sepetten çıkar" hidden for screen readers, so the column still has a name.
+- The table's `min-width` becomes 800 px and the new column is 96 px. With 720 px the "Ürün"
+  column would be left with 144 px, too narrow for a photo and a name.
+- In each row, a `button` with the visible text "Çıkar", styled as a text link (`--brand`, no
+  frame), as in the sketch. It is a button, not a link: it does something, it goes nowhere.
+- **Its name for screen readers:** "Çıkar" followed by the product's name and amount, hidden on
+  screen: "Çıkar Çiğ Badem 500 g". Every row has a "Çıkar", and alone it does not say which
+  product goes (the same problem as "Artır" in ZEY-21). The visible word stays at the start of
+  the name, so a visitor who uses voice control can still say "click Çıkar".
+- The hidden text uses the same CSS as the hidden legend in ZEY-21 (`position: absolute`, 1 px,
+  `clip`). The button is `position: relative`, for the same reason as the picker's group: so the
+  hidden text cannot widen the page on a phone.
+
+### `CartContents`: where the focus goes
+
+When a row is removed, its button disappears with it, and the browser moves the focus to the top
+of the page. A keyboard user would have to tab through the header again to reach the next row.
+So, after a removal:
+
+- **There is a row after the removed one:** the focus goes to that row's "Çıkar".
+- **The removed row was the last one** (other rows remain above it, or the cart is now empty):
+  the focus goes to the "Sepetim" heading. The heading gets `tabIndex={-1}`: the code can focus
+  it, but the Tab key still skips it.
+- Only after a removal. Opening the page, or changing a quantity, does not move the focus.
+- How: before dispatching, the button's handler notes which element should get the focus (the
+  next line's `id`, or the heading). After React has drawn the new rows, an effect focuses it.
+  The buttons are found through a `Map` of refs keyed by line `id`.
+
+### `CartContents`: the empty cart
+
+- **After the read, empty cart:** the "Sepetim" heading, then a box with "Sepetiniz boş" and a
+  link "Ürünlere göz atın →" to `/urunler`. No table, no total. This replaces ZEY-20's "only the
+  heading".
+- The box follows the sketch: a frame (`--line`), the text centred. The link is a `Link`.
+- **Before the read**: still only the heading (ZEY-20). Otherwise a visitor with a full cart
+  would see "Sepetiniz boş" for a moment on every visit.
+
+## Preconditions and postconditions
+
+**Before:**
+- The cart has been read (ZEY-18) and the page shows its rows (ZEY-20).
+
+**After pressing "Çıkar" in a row:**
+- That line is no longer in the cart; the other lines are unchanged and in the same order.
+- The cart total and "Sepet (n)" no longer count it.
+- `zeydem-cart-v1` no longer holds it, if `localStorage` can be used.
+- The focus is on the next row's "Çıkar", or on "Sepetim" if there is no next row.
+
+**After removing the last line:**
+- The page shows "Sepetiniz boş" and the link; the header shows "Sepet (0)"; the record is `[]`.
+
+## Invariants
+
+- Everything in ZEY-17, ZEY-18 and ZEY-20 still holds.
+- Removing never changes another line, nor the order of the remaining lines.
+- "Sepetiniz boş" is shown only once the cart has been read and is empty.
+
+## Failure modes
+
+- **An `id` not in the cart sent to the reducer:** the cart is unchanged. It cannot happen through
+  the page: each button sends its own row's `id`.
+- **`localStorage` cannot be used:** the row disappears on the page; a reload brings it back, as
+  in ZEY-18.
+- **Two quick presses on the same "Çıkar":** the first removes the row and its button; there is
+  no second button to press.
+
+## Known limits
+
+- **No undo and no confirmation:** a line removed by mistake has to be added again from its
+  product page.
+- **Two tabs:** as in ZEY-18, a line removed in one tab can come back when the other tab saves.
+
+## Checks
+
+Reducer (a cart with 1 L olive oil × 1 and almonds × 2):
+- **Given** the cart **When** `remove` is sent for the almonds **Then** only the olive oil line
+  is left, unchanged.
+- **Given** the cart **When** `remove` is sent for an `id` that is not in it **Then** the cart is
+  unchanged.
+
+`CartContents` (with `SiteHeader`, the ZEY-20 cart saved before rendering: 1 L olive oil × 1,
+5 L olive oil × 1, almonds × 2):
+- **Given** the cart **Then** each row has a button named "Çıkar <name> <amount>", for example
+  "Çıkar Çiğ Badem 500 g".
+- **Given** the cart **When** "Çıkar Çiğ Badem 500 g" is pressed **Then** there are two rows, the
+  page shows `2.400,00 TL`, the header shows "Sepet (2)" and the record has no almonds.
+- **Given** the cart **When** "Çıkar" is pressed in the 1 L row **Then** the focus is on
+  "Çıkar Natürel Sızma Zeytinyağı 5 L".
+- **Given** the cart **When** "Çıkar" is pressed in the almond row (the last one) **Then** the
+  focus is on the "Sepetim" heading.
+- **Given** a cart with one line **When** its "Çıkar" is pressed **Then** the page shows
+  "Sepetiniz boş", no table and no "Toplam"; "Ürünlere göz atın →" links to `/urunler`; the
+  header shows "Sepet (0)".
+- **Given** an empty saved cart **When** the page opens **Then** it shows "Sepetiniz boş" and the
+  link.
+
+Live:
+- **Given** the deployed site with three lines **When** I press "Çıkar" on the almonds **Then**
+  the row goes, the total and the header go down; **When** I reload **Then** the almonds do not
+  come back.
+- **Given** the deployed site **When** I remove every line **Then** I see "Sepetiniz boş"; **When**
+  I click "Ürünlere göz atın →" **Then** I am on `/urunler`.
+- **Given** the deployed site **When** I reach "Çıkar" with the Tab key and press Enter **Then**
+  the focus lands on the next row's "Çıkar".
+
+## Must still work
+
+- The ZEY-17, ZEY-18, ZEY-20 and ZEY-21 checks. ZEY-20's "an empty cart shows the heading and no
+  table" still holds; the message is added below the heading.
+- On a phone, the page still does not scroll sideways (ZEY-21).
+- `npm test`, `npm run lint` and `npm run build` in `frontend/`.
+
+## Out of scope
+
+A confirmation before removing, "Undo", emptying the cart with one button, a message after
+removing ("… sepetten çıkarıldı").

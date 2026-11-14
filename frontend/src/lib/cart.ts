@@ -11,7 +11,8 @@ export const MAX_QUANTITY = 10;
 export type CartAction =
   | { type: "add"; product: Product; quantity: number }
   | { type: "load"; lines: CartLine[] }
-  | { type: "setQuantity"; id: number; quantity: number };
+  | { type: "setQuantity"; id: number; quantity: number }
+  | { type: "remove"; id: number };
 
 export function cartCount(lines: CartLine[]): number {
   return lines.reduce((sum, line) => sum + line.quantity, 0);
@@ -36,6 +37,10 @@ export function cartReducer(lines: CartLine[], action: CartAction): CartLine[] {
       Number.isInteger(quantity) && quantity >= 1 && quantity <= MAX_QUANTITY;
     if (!allowed) return lines;
     return lines.map((line) => (line.id === id ? { ...line, quantity } : line));
+  }
+
+  if (action.type === "remove") {
+    return lines.filter((line) => line.id !== action.id);
   }
 
   const { product, quantity } = action;

@@ -183,6 +183,25 @@ describe("cartReducer: setQuantity", () => {
   });
 });
 
+describe("cartReducer: remove", () => {
+  const start: CartLine[] = [
+    { ...oil, quantity: 1 },
+    { ...almonds, quantity: 2 },
+  ];
+
+  it("removes the line and leaves the other lines alone", () => {
+    const lines = cartReducer(start, { type: "remove", id: almonds.id });
+
+    expect(lines).toEqual([{ ...oil, quantity: 1 }]);
+  });
+
+  it("ignores an id that is not in the cart", () => {
+    const lines = cartReducer(start, { type: "remove", id: bigOil.id });
+
+    expect(lines).toEqual(start);
+  });
+});
+
 describe("totals", () => {
   const threeLines: CartLine[] = [
     { ...oil, quantity: 1 },
