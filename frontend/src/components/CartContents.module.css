@@ -13,7 +13,8 @@
    does not shift the columns when a quantity changes. */
 .table {
   width: 100%;
-  min-width: 720px;
+  /* 800, not 720: with the Çıkar column, 720 would leave Ürün too narrow for a photo and a name. */
+  min-width: 800px;
   table-layout: fixed;
   border-collapse: collapse;
 }
@@ -21,6 +22,42 @@
 /* Wide enough for "19.500,00 TL" (5 L × 10) and the quantity picker; Ürün takes the rest. */
 .fixedCol {
   width: 160px;
+}
+
+.removeCol {
+  width: 96px;
+}
+
+/* Read by screen readers, not shown; the same rule as the hidden legend in QuantityInput. */
+.hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* A button that looks like a text link, as in the sketch: it acts, it does not go anywhere.
+   position: relative keeps the hidden product name inside it, so it cannot widen the page. */
+.remove {
+  position: relative;
+  min-height: 44px;
+  padding: 0 8px;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: var(--brand);
+  cursor: pointer;
+}
+
+.remove:hover {
+  text-decoration: underline;
+}
+
+.remove:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
 }
 
 .table th {
@@ -78,6 +115,34 @@
 /* A price should not break over two lines. */
 .money {
   white-space: nowrap;
+}
+
+/* The empty cart, as in the sketch: a framed box, text in the middle. */
+.empty {
+  padding: 64px 24px;
+  text-align: center;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.emptyText {
+  margin: 0 0 16px;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.browse {
+  color: var(--brand);
+  text-decoration: none;
+}
+
+.browse:hover {
+  text-decoration: underline;
+}
+
+.browse:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
 }
 
 /* The box under the table, on the right, as in the sketch. */
