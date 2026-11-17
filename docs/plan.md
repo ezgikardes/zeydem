@@ -100,7 +100,7 @@ implementation steps inside the ticket, split into BE and FE lines. Labels: `FE`
 | Hafta 1 | 2–8 Nov | H5, T1.1, T1.2 | 22 | Product list live, served from the database |
 | Hafta 2 | 9–15 Nov | T1.3–T1.5, T2.1–T2.6 | 19.5 | Cart works |
 | Hafta 3 | 16–22 Nov | T3.1–T3.5, T4.1 | 23.5 | An order can be paid with a test card |
-| Hafta 4 | 23–29 Nov | T4.2–T4.6, T5.1–T5.3, README with the AI section, 6-minute presentation | 20 + ~3 | Delivery on 29 November |
+| Hafta 4 | 23–29 Nov | T4.2–T4.6, T5.1–T5.3, 6-minute presentation | 20 + ~3 | Delivery on 29 November |
 
 About 93 hours against a budget of about 85 (20 h a week). **If time runs short, cut in this
 order:** first the edge cases labelled `kesilebilir` (T1.5, T2.3, T3.5, T4.2), then F5
