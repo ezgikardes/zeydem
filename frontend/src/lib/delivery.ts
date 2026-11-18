@@ -32,6 +32,9 @@ const REQUIRED: [keyof DeliveryDetails, string][] = [
 // 5xxxxxxxxx, 05xxxxxxxxx or +905xxxxxxxxx.
 const MOBILE = /^(\+90|0)?5\d{9}$/;
 
+// Loose on purpose: text, one "@", text, a dot, text, and no spaces.
+const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 export function deliveryErrors(details: DeliveryDetails): DeliveryErrors {
   const errors: DeliveryErrors = {};
 
@@ -42,12 +45,18 @@ export function deliveryErrors(details: DeliveryDetails): DeliveryErrors {
     }
   }
 
-  // else if: an empty phone gets one message, not two
   const phone = details.phone.trim();
   if (phone === "") {
     errors.phone = "Telefon numarası gerekli.";
   } else if (!MOBILE.test(phone.replace(/[\s()-]/g, ""))) {
     errors.phone = "Telefon numarası 05xx xxx xx xx biçiminde olmalı.";
+  }
+
+  const email = details.email.trim();
+  if (email === "") {
+    errors.email = "E-posta gerekli.";
+  } else if (!EMAIL.test(email)) {
+    errors.email = "E-posta adresi eksik görünüyor.";
   }
 
   return errors;
