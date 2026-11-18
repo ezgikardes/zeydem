@@ -1,0 +1,13 @@
+/* A framed box, like the total on the cart page. */
+.summary {
+  padding: 20px 24px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.title {
+  margin: 0 0 8px;
+  font-size: 22px;
+  font-weight: 600;
+}

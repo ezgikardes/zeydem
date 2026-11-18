@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { useCart } from "./CartProvider";
+import DeliveryForm from "./DeliveryForm";
+import OrderSummary from "./OrderSummary";
 import styles from "./CheckoutContents.module.css";
 
 export default function CheckoutContents() {
@@ -19,6 +21,12 @@ export default function CheckoutContents() {
             href="/sepet">
             Sepete dön
           </Link>
+        </div>
+      )}
+      {loaded && lines.length > 0 && (
+        <div className={styles.layout}>
+          <DeliveryForm />
+          <OrderSummary />
         </div>
       )}
     </>
