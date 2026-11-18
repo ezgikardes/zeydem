@@ -222,3 +222,22 @@ describe("removing a line from the cart", () => {
     ).toHaveAttribute("href", "/urunler");
   });
 });
+
+describe("going to checkout", () => {
+  it("links to the checkout page when the cart has lines", () => {
+    renderCartContents(threeLines);
+
+    expect(screen.getByRole("link", { name: "Ödemeye geç" })).toHaveAttribute(
+      "href",
+      "/odeme",
+    );
+  });
+
+  it("shows no checkout link when the cart is empty", () => {
+    renderCartContents([]);
+
+    expect(
+      screen.queryByRole("link", { name: "Ödemeye geç" }),
+    ).not.toBeInTheDocument();
+  });
+});
