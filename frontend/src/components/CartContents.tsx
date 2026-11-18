@@ -138,10 +138,18 @@ export default function CartContents() {
               </tbody>
             </table>
           </div>
-          <p className={styles.total}>
-            <span>Toplam</span>
-            <span>{formatPrice(fromKurus(cartTotal(lines)))}</span>
-          </p>
+          <div className={styles.total}>
+            <p className={styles.totalRow}>
+              <span>Toplam</span>
+              <span>{formatPrice(fromKurus(cartTotal(lines)))}</span>
+            </p>
+            {/* A link, not a button: it goes to another page */}
+            <Link
+              className={styles.checkout}
+              href="/odeme">
+              Ödemeye geç
+            </Link>
+          </div>
         </>
       )}
     </>
