@@ -21,33 +21,27 @@ form and sees an order summary of their cart. Nothing is sent anywhere yet: the
 cart page. `CheckoutPage` renders `CheckoutContents` inside a `main`, the same way `CartPage`
 renders `CartContents`. It fetches nothing.
 
-### `DeliveryDetails`: `src/lib/checkout.ts`
+### `DeliveryForm`
 
-What the customer types, as one plain object. ZEY-24 adds the field rules next to it, ZEY-25
-sends it with the order.
+`src/components/DeliveryForm.tsx`. No props.
 
-| Field | Label on the page | Input | `autocomplete` |
-|---|---|---|---|
-| `name` | Ad soyad | text | `name` |
-| `phone` | Telefon | `type="tel"` | `tel` |
-| `email` | E-posta | `type="email"` | `email` |
-| `city` | İl | text | `address-level1` |
-| `district` | İlçe | text | `address-level2` |
-| `address` | Açık adres | `textarea` | `street-address` |
+| Label on the page | Input | `autocomplete` |
+|---|---|---|
+| Ad soyad | text | `name` |
+| Telefon | `type="tel"` | `tel` |
+| E-posta | `type="email"` | `email` |
+| İl | text | `address-level1` |
+| İlçe | text | `address-level2` |
+| Açık adres | `textarea` | `street-address` |
 
-- Every field is a string; `EMPTY_DETAILS` has every field `""`.
 - **Why `autocomplete`:** the browser can fill in a saved address, and the right keyboard opens
   on a phone (`tel`, `email`).
 - **Why E-posta is here:** the order summary will always be sent by email (T3.6), so it is
   required from the start.
 - İl and İlçe are free text; there is no province list.
-
-### `DeliveryForm`
-
-`src/components/DeliveryForm.tsx`. Props: `value: DeliveryDetails`, `onChange(next)`. It holds
-no state of its own, like `QuantityInput`: the page holds the values, so ZEY-24 can check them
-and ZEY-25 can send them.
-
+- **The fields keep what is typed themselves** (uncontrolled inputs): nothing in this ticket
+  reads the values. ZEY-24 moves them up into the page, as one `DeliveryDetails` object, when
+  its field rules need them; ZEY-25 sends that object with the order.
 - A `form` with the heading "Teslimat bilgileri" (`h2`), `noValidate` so the browser does not
   show its own bubbles (ZEY-24 shows ours).
 - One visible `label` per field, linked to its input by `htmlFor`/`id`.
@@ -68,8 +62,7 @@ and ZEY-25 can send them.
 
 ### `CheckoutContents`
 
-`src/components/CheckoutContents.tsx`, `"use client"` (it reads the cart and holds the form
-values).
+`src/components/CheckoutContents.tsx`, `"use client"` (it reads the cart).
 
 - A "Siparişi tamamla" heading (`h1`), always.
 - **Before the read** (`loaded` is `false`): only the heading, as on the cart page.
@@ -77,8 +70,8 @@ values).
   no summary.
 - **After the read, with lines:** `DeliveryForm` and `OrderSummary`, side by side on a wide
   screen (form on the left, as in the sketch), the form first on a narrow one.
-- The form values live in `useState(EMPTY_DETAILS)`. They are not saved: a reload empties the
-  form (personal details are not stored in the browser).
+- The form values are not saved: a reload empties the form (personal details are not stored in
+  the browser).
 
 ### `CartContents`: "Ödemeye geç"
 
