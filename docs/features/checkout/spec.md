@@ -234,6 +234,9 @@ shows its value from `details` and calls `onChange` with that one field changed.
   the button in ZEY-25 checks every field anyway.
 - **An address book fills every field at once:** no message until a field is left; a wrong
   autofilled value shows its message when the customer passes through that field.
+- **A message makes the page taller than the window:** a scrollbar appears, and the centred
+  page must not shift sideways when it does. `html` keeps the scrollbar's space
+  (`scrollbar-gutter: stable`), for every page, since removing a cart line does the same.
 
 ## Known limits
 
