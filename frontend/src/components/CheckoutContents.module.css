@@ -1,0 +1,47 @@
+.title {
+  font-size: clamp(32px, 5vw, 48px);
+  font-weight: 600;
+  margin: 0 0 32px;
+}
+
+/* Form on the left, summary on the right, as in the sketch; the form first on a narrow screen. */
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 380px);
+  gap: 48px;
+  align-items: start;
+}
+
+@media (max-width: 800px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* The empty cart, the same box as on the cart page. */
+.empty {
+  padding: 64px 24px;
+  text-align: center;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.emptyText {
+  margin: 0 0 16px;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.back {
+  color: var(--brand);
+  text-decoration: none;
+}
+
+.back:hover {
+  text-decoration: underline;
+}
+
+.back:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}

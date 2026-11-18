@@ -145,19 +145,44 @@
   outline-offset: 2px;
 }
 
-/* The box under the table, on the right, as in the sketch. */
+/* The box under the table, on the right, as in the sketch: the total, then "Ödemeye geç". */
 .total {
   display: flex;
-  justify-content: space-between;
-  gap: 32px;
+  flex-direction: column;
+  gap: 20px;
   width: fit-content;
   min-width: min(100%, 320px);
   margin: 32px 0 0 auto;
   padding: 20px 24px;
-  font-size: 20px;
-  font-weight: 600;
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: 8px;
   box-sizing: border-box;
+}
+
+.totalRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 32px;
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+/* Looks like the primary button (AddToCart): --bg on --brand, contrast 10.4. */
+.checkout {
+  display: block;
+  height: 46px;
+  line-height: 46px;
+  border-radius: 6px;
+  background: var(--brand);
+  color: var(--bg);
+  font-size: 16px;
+  text-align: center;
+  text-decoration: none;
+}
+
+.checkout:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 3px;
 }
