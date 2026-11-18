@@ -17,9 +17,7 @@ the colours become CSS variables in one tokens file, and no component writes a c
 | `--bg` | `#F6F3EC` | Page background |
 | `--bg-warm` | `#F3E3C8` | Highlighted bands |
 | `--line` | `#DCD3C2` | Dividers |
-
-Error messages need a red that is not in this list yet; it is chosen with ZEY-15, the first
-ticket that shows an error, and added here.
+| `--error` | `#B3261E` | Field error: the message text and the field border (ZEY-24) |
 
 ## Contrast
 
@@ -34,6 +32,8 @@ Target: WCAG AA, which asks for 4.5:1 for body text and 3:1 for large text.
 | `--ink` on `--honey` | 6.2 | Honey only ever carries dark text |
 | white on `--honey` | 2.5 | Never |
 | white on `--sage` | 3.0 | Never; sage is for borders and icons, not text backgrounds |
+| `--error` on `--surface` | 6.5 | Field error messages (small text) |
+| `--error` on `--bg` | 5.9 | Field error messages on the page background |
 
 `--line` on `--bg` is 1.3: dividers only, never a field border that the visitor must see to use
 the form. A new text and background pair is checked before it is used and added to this table.

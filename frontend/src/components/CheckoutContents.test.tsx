@@ -114,3 +114,61 @@ describe("the checkout page", () => {
     expect(screen.queryByRole("textbox")).not.toBeInTheDocument();
   });
 });
+
+// ZEY-24: a field shows its message once the customer has left it
+describe("the field errors", () => {
+  it("asks for the name when it is left empty", () => {
+    renderCheckout(threeLines);
+
+    const name = screen.getByLabelText("Ad soyad");
+    fireEvent.blur(name);
+
+    expect(screen.getByText("Ad soyad gerekli.")).toBeInTheDocument();
+    expect(name).toHaveAttribute("aria-invalid", "true");
+    expect(name).toHaveAccessibleDescription("Ad soyad gerekli.");
+  });
+
+  // Typing is not leaving: no message while the customer is still in the field
+  it("shows nothing while the customer is still typing", () => {
+    renderCheckout(threeLines);
+
+    fireEvent.change(screen.getByLabelText("Telefon"), {
+      target: { value: "0532 12" },
+    });
+
+    expect(
+      screen.queryByText("Telefon numarası 05xx xxx xx xx biçiminde olmalı."),
+    ).not.toBeInTheDocument();
+  });
+
+  it("shows the phone message on leaving, and drops it once the number is right", () => {
+    renderCheckout(threeLines);
+
+    const phone = screen.getByLabelText("Telefon");
+    fireEvent.change(phone, { target: { value: "0532 12" } });
+    fireEvent.blur(phone);
+
+    expect(
+      screen.getByText("Telefon numarası 05xx xxx xx xx biçiminde olmalı."),
+    ).toBeInTheDocument();
+
+    fireEvent.change(phone, { target: { value: "0532 123 45 67" } });
+
+    expect(
+      screen.queryByText("Telefon numarası 05xx xxx xx xx biçiminde olmalı."),
+    ).not.toBeInTheDocument();
+    expect(phone).not.toHaveAttribute("aria-invalid");
+  });
+
+  it("finds a half-typed email on leaving", () => {
+    renderCheckout(threeLines);
+
+    const email = screen.getByLabelText("E-posta");
+    fireEvent.change(email, { target: { value: "ayse@ornek" } });
+    fireEvent.blur(email);
+
+    expect(
+      screen.getByText("E-posta adresi eksik görünüyor."),
+    ).toBeInTheDocument();
+  });
+});

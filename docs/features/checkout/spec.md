@@ -135,3 +135,154 @@ button, because it goes to another page.
 The "Siparişi tamamla" button, the card field and payment (ZEY-25); field rules and error
 messages (ZEY-24); sending the email (T3.6); keeping the form values; a province list; shipping
 cost; the site footer.
+
+# ZEY-24: The customer sees an error message on a missing or wrong field
+
+Issue: #42 · Jira: ZEY-24 · Sketch: `docs/features/design/sketches/05-checkout.png` (Alan hataları)
+
+The ZEY-23 form accepts anything. Here each field gets a rule, and the customer sees a message
+under a field as soon as they leave it wrong. The rules are a plain function, so the
+"Siparişi tamamla" button in ZEY-25 checks all fields with the same code.
+
+## Interface
+
+### `src/lib/delivery.ts` (no React)
+
+```ts
+export type DeliveryDetails = {
+  name: string; phone: string; email: string;
+  city: string; district: string; address: string;
+};
+export const EMPTY_DELIVERY: DeliveryDetails; // six empty strings
+export type DeliveryErrors = Partial<Record<keyof DeliveryDetails, string>>;
+export function deliveryErrors(details: DeliveryDetails): DeliveryErrors;
+```
+
+`deliveryErrors` returns one message for each wrong field and nothing for a right one; an empty
+object means every field is right. It does not change `details`.
+
+| Field | Rule | Empty | Wrong |
+|---|---|---|---|
+| `name` | not empty | "Ad soyad gerekli." | – |
+| `phone` | spaces, dashes and brackets removed, it is `5xxxxxxxxx`, `05xxxxxxxxx` or `+905xxxxxxxxx` | "Telefon numarası gerekli." | "Telefon numarası 05xx xxx xx xx biçiminde olmalı." |
+| `email` | no space inside, one "@", at least one dot after it, text around each | "E-posta gerekli." | "E-posta adresi eksik görünüyor." |
+| `city` | not empty | "İl gerekli." | – |
+| `district` | not empty | "İlçe gerekli." | – |
+| `address` | not empty | "Açık adres gerekli." | – |
+
+- **Empty** means nothing but spaces. Spaces at the start and end are ignored for every rule
+  (an address book or a paste often adds one).
+- **Why one message for short and long numbers:** "eksik" (missing) is wrong for a number with
+  too many digits; the expected shape fits both. Extra digits are not blocked while typing,
+  because a cut-off paste would leave a number that looks right but is not.
+- **The email rule is loose on purpose:** whether the address exists is only known once an email
+  is sent (T3.6); the rule only catches a half-typed address.
+- **The values are not cleaned:** the form keeps what the customer typed. Cleaning the number for
+  sending is ZEY-25's.
+
+### `CheckoutContents`: the values move up
+
+`CheckoutContents` holds the six values as one `DeliveryDetails` (`useState`, starting from
+`EMPTY_DELIVERY`) and passes them to `DeliveryForm`. ZEY-25 sends this object with the order.
+The values are still not saved anywhere (ZEY-23 invariant).
+
+### `DeliveryForm`: controlled fields and messages
+
+Props: `details: DeliveryDetails`, `onChange: (details: DeliveryDetails) => void`. Each field
+shows its value from `details` and calls `onChange` with that one field changed.
+
+- **Which fields have been left:** `DeliveryForm` remembers each field the customer has left at
+  least once (`onBlur`). This is display state, not data, so it stays in the form; ZEY-25 may
+  move it up when the button has to show every message at once.
+- **Shown message** = the field has been left **and** `deliveryErrors(details)` has a message
+  for it. The errors are worked out from the values on every render, so a left field is checked
+  again on every change: the message disappears as soon as the field is right, and changes when
+  the kind of mistake changes.
+- **Markup of a field with a shown message:**
+  - the input has `aria-invalid="true"` and `aria-describedby` pointing at the message;
+  - the message is a `p` under the input, with the id `<input id>-error`
+    (e.g. `delivery-phone-error`);
+  - the input has a red border, the message is red text.
+- A field without a shown message has neither attribute and no message element.
+- No asterisk on the labels: all six fields are required, so a mark would not tell anything apart.
+
+### Colour
+
+`--error: #b3261e` in `src/styles/tokens.css`: the text and border of a field error. It reads on
+`--surface` and `--bg` above the 4.5:1 contrast for small text.
+
+## Preconditions and postconditions
+
+**Before:** the ZEY-23 page works: the empty cart message, the form, the summary.
+
+**After the customer leaves a field:**
+- If the field's value breaks its rule, its message is under it and the field is marked invalid.
+- If the value keeps the rule, there is no message.
+
+**After the customer changes a left field:** the message matches the new value.
+
+## Invariants
+
+- A field the customer has not left shows no message, whatever its value.
+- The message shown for a field is always `deliveryErrors(details)` for that field: the page has
+  one source of rules.
+- The form values are never written to `localStorage` or anywhere else (ZEY-23).
+
+## Failure modes
+
+- **The customer never leaves a field** (types and goes straight to another tab): no message;
+  the button in ZEY-25 checks every field anyway.
+- **An address book fills every field at once:** no message until a field is left; a wrong
+  autofilled value shows its message when the customer passes through that field.
+- **A message makes the page taller than the window:** a scrollbar appears, and the centred
+  page must not shift sideways when it does. `html` keeps the scrollbar's space
+  (`scrollbar-gutter: stable`), for every page, since removing a cart line does the same.
+
+## Known limits
+
+- **Landlines and foreign numbers are refused:** the parcel company texts a mobile number.
+- **The email can still bounce:** a well-formed address can belong to no one.
+- **Nothing stops the order yet:** the messages only inform; ZEY-25 keeps the button from sending
+  a wrong form.
+
+## Checks
+
+`deliveryErrors` (`src/lib/delivery.test.ts`), starting from a right set of details
+(`"Ayşe Yılmaz"`, `"0532 123 45 67"`, `"ayse@ornek.com"`, `"Manisa"`, `"Akhisar"`,
+`"Zeytinli Mah. 12. Sok. No: 4"`):
+- **Given** the right details **Then** there are no errors.
+- **Given** each of Ad soyad, İl, İlçe, Açık adres empty or only spaces **Then** that field's
+  "… gerekli." message, and no other.
+- **Given** an empty phone **Then** "Telefon numarası gerekli."
+- **Given** the phone `"5321234567"`, `"05321234567"`, `"+90 532 123 45 67"`,
+  `"(0532) 123-45-67"` **Then** no phone error.
+- **Given** the phone `"0532 12"`, `"0532 123 45 678"`, `"0212 123 45 67"` (a landline)
+  **Then** "Telefon numarası 05xx xxx xx xx biçiminde olmalı."
+- **Given** an empty email **Then** "E-posta gerekli."
+- **Given** the email `"ayse@ornek"`, `"ayseornek.com"`, `"ayse @ornek.com"` **Then**
+  "E-posta adresi eksik görünüyor."; **given** `" ayse@ornek.com "` **Then** no email error.
+
+`CheckoutContents` (the three-line cart of ZEY-23):
+- **Given** the page **When** the customer leaves Ad soyad empty **Then** "Ad soyad gerekli." is
+  under it, the field has `aria-invalid="true"` and is described by the message.
+- **Given** the page **When** the customer types into Telefon without leaving it **Then** no
+  message.
+- **Given** the page **When** the customer types `"0532 12"` into Telefon and leaves it **Then**
+  "Telefon numarası 05xx xxx xx xx biçiminde olmalı." **When** they complete it to
+  `"0532 123 45 67"` **Then** the message is gone and the field is not marked invalid.
+- **Given** the page **When** the customer types `"ayse@ornek"` into E-posta and leaves it
+  **Then** "E-posta adresi eksik görünüyor."
+
+## Must still work
+
+- The ZEY-23 checks: each field shows what was typed (now through `details`), the summary, the
+  empty cart.
+- The cart page checks (ZEY-20, ZEY-21, ZEY-22).
+- `npm test`, `npm run lint` and `npm run build` in `frontend/`.
+
+## Out of scope
+
+Checking every field and focusing the first wrong one when the button is pressed, and the
+button itself (ZEY-25); server-side validation and the 400 error shape (ZEY-25 contract);
+cleaning the number for sending (ZEY-25); sending the email (T3.6); a province/district list;
+landline numbers; blocking extra digits while typing.
