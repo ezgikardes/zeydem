@@ -26,7 +26,7 @@ export default function CheckoutContents() {
       {loaded && lines.length > 0 && (
         <div className={styles.layout}>
           <DeliveryForm />
-          <OrderSummary />
+          <OrderSummary lines={lines} />
         </div>
       )}
     </>
