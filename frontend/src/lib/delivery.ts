@@ -28,6 +28,10 @@ const REQUIRED: [keyof DeliveryDetails, string][] = [
   ["address", "Açık adres gerekli."],
 ];
 
+// A Turkish mobile number once spaces, dashes and brackets are gone:
+// 5xxxxxxxxx, 05xxxxxxxxx or +905xxxxxxxxx.
+const MOBILE = /^(\+90|0)?5\d{9}$/;
+
 export function deliveryErrors(details: DeliveryDetails): DeliveryErrors {
   const errors: DeliveryErrors = {};
 
@@ -36,6 +40,14 @@ export function deliveryErrors(details: DeliveryDetails): DeliveryErrors {
     if (details[field].trim() === "") {
       errors[field] = message;
     }
+  }
+
+  // else if: an empty phone gets one message, not two
+  const phone = details.phone.trim();
+  if (phone === "") {
+    errors.phone = "Telefon numarası gerekli.";
+  } else if (!MOBILE.test(phone.replace(/[\s()-]/g, ""))) {
+    errors.phone = "Telefon numarası 05xx xxx xx xx biçiminde olmalı.";
   }
 
   return errors;
