@@ -16,6 +16,9 @@ body,
 
 html {
   -webkit-text-size-adjust: 100%;
+  /* Keeps the scrollbar's space, so the page does not shift sideways when a message or a
+     removed cart line makes it start or stop scrolling (found in ZEY-24) */
+  scrollbar-gutter: stable;
 }
 
 body {
